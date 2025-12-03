@@ -5,6 +5,11 @@ export interface GrowthRecord {
   id: string;
 }
 
+export interface VaccineData {
+  id: string;
+  name: string;
+}
+
 export type RootStackParamList = {
   SplashScreen: undefined;
   WelcomeScreen: undefined;
@@ -32,6 +37,7 @@ export type RootStackParamList = {
   Vaccination:undefined;
   VaccinationCalendar:undefined;
   VaccinationForm:undefined;
+    VaccinationUpdate: { vaccineData: VaccineData };
 };
 
 export type BottomTabParamList = {

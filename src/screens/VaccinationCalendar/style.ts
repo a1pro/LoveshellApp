@@ -263,7 +263,7 @@ export const styles = StyleSheet.create({
     minWidth: horizontalScale(80),
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0, // Prevent button from shrinking
+    flexShrink: 0,  
   },
   updateButtonText: {
     color: COLORS.White,
