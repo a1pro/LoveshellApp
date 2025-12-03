@@ -29,7 +29,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-    }
+    },
+    sexButton: {
+  flex: 1,
+  padding: 12,
+  borderRadius: 8,
+  borderWidth: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+allergyButton: {
+  flex: 1,
+  padding: 12,
+  borderRadius: 8,
+  borderWidth: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
 });
 
 export default styles;

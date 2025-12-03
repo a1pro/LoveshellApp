@@ -9,7 +9,20 @@ const COLORS = {
   red: '#F53030',
   inputBorder: "#C3EBFF",
   shottxt: "#6C7278",
-  blue: "#4D81E7"
+  blue: "#4D81E7",
+  background:"#EBC894B2",
+  grey: '#9E9E9E',
+  lightblue: '#0072FF',
+  buttonTxt: '#5C5C5C',
+  darkgrey:"#767676",
+  lightGrey: '#E5E5E5',
+  lightGreen:"#C3EDBF",
+  lightblue2:"#B9DEE7",
+  lightred:"#FBB9C5",
+  lightyellow:"#F8EFC6" ,
+  navyblue:"#156082",
+  orange:"#E97132",
+  
 };
 
 export default COLORS;

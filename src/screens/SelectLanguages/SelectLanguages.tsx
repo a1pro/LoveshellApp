@@ -13,39 +13,35 @@ import VectorIcon from '../../components/VectorIcon';
 import COLORS from '../../utils/Colors';
 import CustomButton from '../../components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from '../../i18n';
+
 import { useTranslation } from 'react-i18next';
+
 type Props = NativeStackScreenProps<RootStackParamList, 'SelectLanguages'>;
 
 const languageOptions = [
-  { id: '1', label: 'Portuguese', image: IMAGES.potig },
-  { id: '2', label: 'English', image: IMAGES.eng },
-  { id: '3', label: 'Spanish', image: IMAGES.spanish },
-  { id: '4', label: 'French', image: IMAGES.french },
-  { id: '5', label: 'Italian', image: IMAGES.italy },
+  { id: 'pt', label: 'Portuguese', image: IMAGES.potig },
+  { id: 'en', label: 'English', image: IMAGES.eng },
+  { id: 'es', label: 'Spanish', image: IMAGES.spanish },
+  { id: 'fr', label: 'French', image: IMAGES.french },
+  { id: 'it', label: 'Italian', image: IMAGES.italy },
 ];
 
 const SelectLanguages: React.FC<Props> = ({ navigation }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const onSave = async () => {
-    navigation.navigate('Login');
     if (selectedLanguage) {
       await AsyncStorage.setItem('selectedLanguage', selectedLanguage);
-      i18n.changeLanguage(selectedLanguage);
-      navigation.navigate('Login');
+      await i18n.changeLanguage(selectedLanguage);
     }
+    navigation.navigate('Login');
   };
 
-  const renderItem = ({
-    item,
-  }: {
-    item: { id: string; label: string; image: any };
-  }) => (
+  const renderItem = ({ item }: { item: { id: string; label: string; image: any } }) => (
     <TouchableOpacity
       style={styles.btns}
-      onPress={() => setSelectedLanguage(item.label)}
+      onPress={() => setSelectedLanguage(item.id)}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Image
@@ -57,14 +53,8 @@ const SelectLanguages: React.FC<Props> = ({ navigation }) => {
       </View>
       <VectorIcon
         type="MaterialIcons"
-        name={
-          selectedLanguage === item.label
-            ? 'check-box'
-            : 'check-box-outline-blank'
-        }
-        color={
-          selectedLanguage === item.label ? COLORS.blue : COLORS.placeholder
-        }
+        name={selectedLanguage === item.id ? 'check-box' : 'check-box-outline-blank'}
+        color={selectedLanguage === item.id ? COLORS.blue : COLORS.placeholder}
       />
     </TouchableOpacity>
   );
@@ -85,7 +75,7 @@ const SelectLanguages: React.FC<Props> = ({ navigation }) => {
               keyExtractor={item => item.id}
             />
             <Spacer size={15} />
-            <CustomButton onPress={onSave} title="Saved" />
+            <CustomButton onPress={onSave} title={t('saved')} />
           </View>
         </SafeAreaView>
       </KeyboardAvoidingContainer>

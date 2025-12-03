@@ -10,7 +10,7 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate('SelectLanguages');
-    }, 2000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 

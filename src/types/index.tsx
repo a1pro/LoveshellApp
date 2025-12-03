@@ -1,6 +1,10 @@
 import { ReactNode } from 'react';
 import { ViewStyle } from 'react-native';
 
+export interface GrowthRecord {
+  id: string;
+}
+
 export type RootStackParamList = {
   SplashScreen: undefined;
   WelcomeScreen: undefined;
@@ -9,10 +13,33 @@ export type RootStackParamList = {
   ProfileScreen: undefined;
   ChildRegister: undefined;
   SelectLanguages: undefined;
+  HomeScreen: undefined;
+  Nutrition:undefined;
+  Meals: undefined;
+  MealCalendar: undefined;
+  AddmealScreen: undefined;
+  MealDetailScreen:undefined;
+  RecipeScreen: undefined;
+  AiScreen: {data:any};
+  Growth: undefined;
+  GrowthDetails: undefined;
+  WeightScreen: undefined;
+  PercentaileScreen: undefined;
+  Development: undefined;
+  DetailDevelopment: undefined;
+  HeightAiScreen:{ selectedGrowthRecord: GrowthRecord };
+  PrankScreen:undefined;
+  Vaccination:undefined;
+  VaccinationCalendar:undefined;
+  VaccinationForm:undefined;
 };
 
 export type BottomTabParamList = {
   Setting: undefined;
+  UserProfile: undefined;
+  HomeScreen: undefined;
+  Child: undefined;
+  Login: undefined;
 };
 export interface GradientBackgroundProps {
   children?: ReactNode;

@@ -17,6 +17,11 @@ import VectorIcon from '../../components/VectorIcon';
 import DatePicker from 'react-native-date-picker';
 
 import { getPlatformFont } from '../../assets/fonts';
+import Toast from 'react-native-toast-message';
+import ENDPOINTS, { API_URL } from '../../APIService/endPoints';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 type Props = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 
 const SignUpScreen: React.FC<Props> = ({ navigation }) => {
@@ -25,16 +30,127 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState<CountryCode>('IN');
   const [countryCode2, setCountryCode2] = useState('91');
   const [showPicker, setShowPicker] = useState(false);
+  const [loading, setLoading] = useState(false);
+   const { t } = useTranslation();
   const [inputData, setInputData] = useState({
     fullname: '',
     username: '',
     email: '',
     password: '',
-    phone: '',
   });
 
   const handleInputChange = (fieldName: string, value: string) => {
     setInputData(prev => ({ ...prev, [fieldName]: value }));
+  };
+
+  const validateForm = () => {
+     if (!inputData.username.trim()) {
+       Toast.show({
+         type: 'error',
+         text1: 'Validation',
+         text2: 'Username is required',
+       });
+       return false;
+     }
+     if (!inputData.email.trim()) {
+       Toast.show({
+         type: 'error',
+         text1: 'Validation',
+         text2: 'Email is required',
+       });
+       return false;
+     }
+     if (!/\S+@\S+\.\S+/.test(inputData.email)) {
+       Toast.show({
+         type: 'error',
+         text1: 'Validation',
+         text2: 'Enter a valid email address',
+       });
+       return false;
+     }
+   
+   
+     if (!inputData.password.trim()) {
+       Toast.show({
+         type: 'error',
+         text1: 'Validation',
+         text2: 'Password is required',
+       });
+       return false;
+     }
+     return true;
+   };
+const formatDate = (date: Date) => {
+  const d = date.getDate().toString().padStart(2, '0');
+  const m = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const y = date.getFullYear();
+  return `${d}-${m}-${y}`;
+};
+
+const handleSignup = async () => {
+  if (!validateForm()) return;
+  setLoading(true);
+  const language = await AsyncStorage.getItem("selectedLanguage") || 'en';
+  try {
+     const formdata = new FormData();
+      formdata.append('username', inputData.username);
+      formdata.append('email', inputData.email);
+      formdata.append('password', inputData.password);
+      formdata.append('preferred_language_code', language);
+      formdata.append('dob', formatDate(date));
+
+      const res = await axios.post(`${API_URL}${ENDPOINTS.register}`, formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('API Response:', res.data);
+        if (res.data.status === "success") {
+         if (res.data.data.access_token) {
+        await AsyncStorage.setItem('Usertoken', res.data.data.access_token);
+        await AsyncStorage.setItem('userData', JSON.stringify(res.data.data.user));
+        console.log('Token:', res.data.data.access_token);
+        console.log('Token stored successfully');
+      }
+    }
+
+      if (res.data.status === "success") {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: res.data.message || 'Registration Successful',
+        });
+                
+        navigation.navigate('ChildRegister');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data.message || 'Registration Failed',
+        });
+      }
+    } catch (error: any) {
+      console.log('Signup error:', error);
+      
+      let errorMessage = 'Please try again later';
+      
+      if (error.response) {
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        errorMessage = 'Network error - Please check your connection';
+      } else {
+        errorMessage = error.message || 'An unexpected error occurred';
+      }
+      
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: errorMessage,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,16 +165,16 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           />
           <View style={styles.viewCon}>
             <CustomText type="subHeading" fontFamily="bold" style={styles.txt}>
-              Sign Up
+              {t('Sign Up')}
             </CustomText>
             <Spacer />
             <CustomText type="small" style={styles.txt}>
-              Create an account to continue!
+              {t('createAccountText')}
             </CustomText>
 
             <View style={{ gap: 10, marginTop: verticalScale(40) }}>
               <CustomInput
-                label="Username"
+                label={t('username')}
                 placeholder="Username"
                 onChangeText={value => handleInputChange('username', value)}
                 value={inputData.username}
@@ -68,7 +184,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 placeholder="Email"
                 onChangeText={value => handleInputChange('email', value)}
                 value={inputData.email}
-                label="Email"
+                label={t('email')}
               />
               <CustomText
                 type="small"
@@ -76,7 +192,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 fontWeight={'500'}
                 fontFamily="light"
               >
-                Date of Birth
+                {t('dob')}
               </CustomText>
               <TouchableOpacity
                 style={styles.btn}
@@ -97,15 +213,15 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                   color={COLORS.shottxt}
                 />
               </TouchableOpacity>
-              <CustomText
+              {/* <CustomText
                 type="small"
                 color={COLORS.black}
                 fontWeight={'500'}
                 fontFamily="light"
               >
-                Phone Number
-              </CustomText>
-              <View
+                {t('phoneNumber')}
+              </CustomText> */}
+              {/* <View
                 style={[
                   styles.btn,
                   {
@@ -151,21 +267,22 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                     fontFamily: getPlatformFont('regular'),
                   }}
                 />
-              </View>
+              </View> */}
 
               <CustomInput
                 type="password"
                 placeholder="Password"
                 onChangeText={value => handleInputChange('password', value)}
                 value={inputData.password}
-                label="Set Password"
+                label={t('password')}
               />
             </View>
             <Spacer size={30} />
 
             <CustomButton
-              onPress={() => navigation.navigate('ChildRegister')}
-              title="Register"
+              onPress={() => handleSignup()}
+              title={t('Sign Up')}
+              isLoading={loading}
             />
             <Spacer size={30} />
 
@@ -174,14 +291,14 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
               color={COLORS.shottxt}
               style={{ textAlign: 'center' }}
             >
-              Already have an account?{` `}
+              {t("already account")}{` `}
               <CustomText
                 onPress={() => navigation.navigate('Login')}
                 type="small"
                 color={COLORS.blue}
                 style={{ textAlign: 'center' }}
               >
-                Log In
+                {t('login')}
               </CustomText>
             </CustomText>
           </View>

@@ -1,0 +1,148 @@
+import { StyleSheet } from "react-native";
+import COLORS from "../../utils/Colors";
+import { verticalScale, horizontalScale } from "../../utils/Metrics";
+
+export const styles = StyleSheet.create({
+  scrollContent: { padding: 0, flexGrow: 1 },
+
+  container: {
+    flex: 1,
+    paddingHorizontal: horizontalScale(16),
+    paddingTop: verticalScale(24),
+    backgroundColor: "transparent",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: horizontalScale(10),
+    marginTop: verticalScale(10),
+    marginBottom: verticalScale(12),
+  },
+  headerTitle: {
+    fontSize: verticalScale(22),
+    color: COLORS.black,
+    fontFamily: "Poppins-SemiBold",
+    textAlign: "center",
+    flex: 1,
+  },
+  iconBtn: {
+    width: horizontalScale(42),
+    height: verticalScale(42),
+    borderRadius: horizontalScale(21),
+    backgroundColor: COLORS.appLinear1,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 3,
+  },
+  summaryCard: {
+    backgroundColor: COLORS.White,
+    marginHorizontal: horizontalScale(16),
+    marginTop: verticalScale(10),
+    borderRadius: verticalScale(18),
+    padding: verticalScale(18),
+    shadowColor: COLORS.black,
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 4,
+    alignItems: "center",
+    marginBottom: verticalScale(16),
+  },
+  cardTitle: {
+    fontSize: verticalScale(20),
+    fontFamily: "Poppins-SemiBold",
+    color: COLORS.black,
+    marginBottom: verticalScale(18),
+  },
+  cardRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: verticalScale(8),
+  },
+    cardRow2: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: verticalScale(8),
+    paddingHorizontal: horizontalScale(10),
+  },
+  cardIcon: {
+    marginHorizontal: horizontalScale(6),
+  },
+  cardStatsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: verticalScale(15),
+    marginBottom: verticalScale(15),
+  },
+  cardStat: {
+    fontSize: verticalScale(16),
+    color: COLORS.black,
+    marginHorizontal: horizontalScale(6),
+    fontFamily: "Poppins-Regular",
+  },
+  boldText: {
+    fontFamily: "Poppins-SemiBold",
+    color: COLORS.black,
+    paddingHorizontal: horizontalScale(4),
+    fontSize: verticalScale(20),
+    marginTop: verticalScale(8),
+    paddingBottom: verticalScale(4),
+  },
+  analysisCard: {
+    backgroundColor: "#f4f1fa",
+    marginHorizontal: horizontalScale(16),
+    borderRadius: verticalScale(18),
+    padding: verticalScale(18),
+    elevation: 3,
+    marginTop: verticalScale(2),
+    marginBottom: verticalScale(20),
+    shadowColor: COLORS.darkgrey,
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  analysisHeading: {
+    fontSize: verticalScale(24),
+    fontFamily: "Poppins-SemiBold",
+    color: COLORS.black,
+    marginBottom: verticalScale(8),
+  },
+  ratingText: {
+    fontSize: verticalScale(15),
+    fontFamily: "Poppins-Regular",
+    color: COLORS.buttonTxt,
+    marginBottom: verticalScale(4),
+  },
+  ratingPoor: {
+    color: COLORS.red,
+    fontFamily: "Poppins-SemiBold",
+  },
+  nutritionScore: {
+    color: COLORS.inputBorder,
+    fontFamily: "Poppins-SemiBold",
+  },
+  analysisLabel: {
+    fontFamily: "Poppins-SemiBold",
+    color: COLORS.black,
+    marginTop: verticalScale(10),
+    fontSize: verticalScale(15),
+  },
+  analysisValue: {
+    fontFamily: "Poppins-Regular",
+    color: COLORS.shottxt,
+    fontSize: verticalScale(14),
+    marginTop: verticalScale(2),
+  },
+  image:{
+    width: horizontalScale(25),
+    height: verticalScale(25),
+    resizeMode: "contain",
+    borderRadius: horizontalScale(10),
+    marginRight: horizontalScale(10),
+    paddingHorizontal: horizontalScale(15),
+  }
+});

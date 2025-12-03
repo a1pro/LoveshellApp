@@ -1,29 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { LogBox } from 'react-native';
+import { Provider } from 'react-redux';
 import AppNavigator from './src/navigation/AppNavigator';
 import Toast from 'react-native-toast-message';
-import i18n from './src/i18n';
+
+import i18n from './src/context/i18n';
 import { I18nextProvider, useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import store from './src/store/store/Store';
+
 LogBox.ignoreAllLogs();
 
-export default function App() {
-  const [loading, setLoading] = useState(true);
+const LoadLanguage = ({ children }: { children: React.ReactNode }) => {
+  const { i18n } = useTranslation();
 
   useEffect(() => {
-    async function init() {
-      await i18n; // i18n init
-      setLoading(false);
-    }
-    init();
-  }, []);
+    const loadLanguage = async () => {
+      const savedLang = await AsyncStorage.getItem('selectedLanguage');
+      if (savedLang) {
+        await i18n.changeLanguage(savedLang);
+      }
+    };
+    loadLanguage();
+  }, [i18n]);
 
-  if (loading) return null;
+  return <>{children}</>;
+};
+
+export default function App() {
   return (
-    <>
-      {/* <I18nextProvider i18n={i18n}> */}
-      <AppNavigator />
-      <Toast />
-      {/* </I18nextProvider> */}
-    </>
+    <Provider store={store}>
+    <I18nextProvider i18n={i18n}>
+      <LoadLanguage>
+        <AppNavigator />
+        <Toast />
+      </LoadLanguage>
+    </I18nextProvider>
+    </Provider>
   );
 }

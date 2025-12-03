@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "906180977648",
+    "project_id": "nutrition-e922f",
+    "storage_bucket": "nutrition-e922f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906180977648:android:53b5b9745323f0f5a77335",
+        "android_client_info": {
+          "package_name": "com.loveshell"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906180977648-tqk21uprgu4jia16hqtgdqqqampootdt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.loveshell",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "906180977648-p6e15go9toapvbofddmbqbqmko5kvaoh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCybLpFWLmxy3I1Czu_1d2EfuASyG8WUQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906180977648-p6e15go9toapvbofddmbqbqmko5kvaoh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
