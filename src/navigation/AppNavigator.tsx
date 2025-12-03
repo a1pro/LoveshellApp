@@ -28,6 +28,7 @@ import PrankScreen from '../screens/PrankScreen/PrankScreen';
 import Vaccination from '../screens/Vaccination/Vaccination';
 import VaccinationCalendar from '../screens/VaccinationCalendar/VaccinationCalendar';
 import VaccinationForm from '../screens/VaccinationForm/VaccinationForm';
+import VaccinationUpdate from '../screens/VaccinationUpdate/VaccinationUpdate';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -85,6 +86,7 @@ const AppNavigator = () => {
           <Stack.Screen name='Vaccination' component={Vaccination}/>
           <Stack.Screen name='VaccinationCalendar' component={VaccinationCalendar}/>
           <Stack.Screen name='VaccinationForm' component={VaccinationForm}/>
+          <Stack.Screen name='VaccinationUpdate' component={VaccinationUpdate}/>
         </Stack.Navigator>
       </SafeAreaProvider>
     </NavigationContainer>

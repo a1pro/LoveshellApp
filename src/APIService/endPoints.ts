@@ -17,7 +17,8 @@ const ENDPOINTS = {
   growthdata:`growth/history`,
   growthrecord:`growth/record`,
   getVaccination:`vaccinations/child/`,
-  addVaccination:`vaccinations`
+  addVaccination:`vaccinations`,
+  updateVaccination:`vaccinations/administer`
 };
 
 export default ENDPOINTS;
