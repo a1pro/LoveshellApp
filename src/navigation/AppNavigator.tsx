@@ -40,6 +40,7 @@ import InternetScreen from '../screens/InternetScreen/InternetScreen';
 import AddnewTopic from '../screens/InternetTopic/AddnewTopic';
 import FeaturedTopic from '../screens/InternetFeatured/FeaturedTopic';
 import MyTopic from '../screens/InternetMyTopic/MyTopic';
+ 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -101,6 +102,7 @@ const AppNavigator = () => {
           <Stack.Screen name='VaccinationCalendar' component={VaccinationCalendar}/>
           <Stack.Screen name='VaccinationForm' component={VaccinationForm}/>
           <Stack.Screen name='VaccinationUpdate' component={VaccinationUpdate}/>
+
           <Stack.Screen name="FoodChart" component={FoodChart}/>
            <Stack.Screen name="BarcodeScreen" component={BarcodeScreen}/>
            <Stack.Screen name="RecipeDetails" component={RecipeDetails}/>
@@ -109,6 +111,7 @@ const AppNavigator = () => {
             <Stack.Screen name="AddnewTopic" component={AddnewTopic} />
             <Stack.Screen name="FeaturedTopic" component={FeaturedTopic} />
             <Stack.Screen name="MyTopic" component={MyTopic} />
+
         </Stack.Navigator>
       </SafeAreaProvider>
     </NavigationContainer>

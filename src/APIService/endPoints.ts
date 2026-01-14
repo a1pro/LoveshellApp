@@ -20,6 +20,7 @@ const ENDPOINTS = {
   growthrecord:`growth/record`,
   getVaccination:`vaccinations/child/`,
   addVaccination:`vaccinations`,
+
   updateVaccination:`vaccinations/administer`,
   addpost:`community/posts`,
   community:`community/all/posts`,
@@ -42,7 +43,8 @@ const ENDPOINTS = {
   getComments:"internet/get/comment",
   getcommentReplies:"internet/get/comment/reply",
   addcommentReply:"internet/add/comment/reply",
-
+ 
+ 
 };
 
 export default ENDPOINTS;

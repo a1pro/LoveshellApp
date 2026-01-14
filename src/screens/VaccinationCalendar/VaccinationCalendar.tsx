@@ -17,10 +17,12 @@ import ENDPOINTS, { API_URL } from '../../APIService/endPoints';
 import CustomButton from '../../components/CustomButton';
 import { useFocusEffect } from '@react-navigation/native';
 import Spacer from '../../components/Spacer';
+ 
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
  
 import IMAGES from '../../assets/images';
+ 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'VaccinationCalendar'>;
 
@@ -32,6 +34,7 @@ interface VaccineData {
   user_id: number;
   vaccine_name: string;
   dose_number: number;
+ 
   status: 'completed' | 'scheduled';  
   due_date: string;
   administered_date: string | null;
@@ -110,13 +113,18 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
             ? vaccine.administered_date.split('T')[0]
             : vaccine.due_date.split('T')[0];
  
+ 
+
+          // Map "scheduled" status to "pending" for UI display
           const uiStatus: DoseStatus = vaccine.status === 'scheduled' ? 'pending' : vaccine.status;
 
           const record: VaccinationRecord = {
             id: vaccine.id,
             vaccine_name: vaccine.vaccine_name,
             dose_number: vaccine.dose_number,
+ 
             status: uiStatus,  
+ 
             due_date: vaccine.due_date,
             administered_date: vaccine.administered_date,
             ageLabel: `Dose ${vaccine.dose_number}`,
@@ -175,7 +183,9 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
     switch (status) {
       case 'completed': return '#22c55e';
       case 'pending':
-      case 'scheduled':  
+ 
+      case 'scheduled': // Handle scheduled status
+ 
       case 'upcoming': return '#f59e0b';
       case 'overdue': return '#ef4444';
       default: return '#f59e0b';
@@ -257,7 +267,9 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
         textColor = '#dc2626'; 
         label = 'Overdue'; 
         break;
-      case 'scheduled':  
+ 
+      case 'scheduled': // Handle scheduled status
+ 
       case 'pending': 
         iconName = 'alarm'; 
         iconColor = '#f59e0b'; 
@@ -305,9 +317,10 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
     });
   };
 
+ 
  const renderVaccineCard = (record: VaccinationRecord, index: number) => {
   const shouldShowUpdateButton = record.status === 'pending' || record.status === 'scheduled' || record.status === 'upcoming';
-
+ 
   return (
     <View key={index} style={styles.vaccineCard}>
       
@@ -329,12 +342,17 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
             </View>
             {renderStatusRow(record.status)}
           </View>
-          <Spacer style={{height:10}}/>
+ 
+            {renderStatusRow(record.status)}
+
+            <Spacer style={{height:10}}/>
           {shouldShowUpdateButton && (
-            <CustomButton 
-              title={t("updateVaccination")} 
-              onPress={() => handleUpdateVaccine(record)}
-            />
+             <CustomButton 
+                  title="Update Vaccination" 
+                  onPress={() => handleUpdateVaccine(record)}
+                  // containerStyle={styles.addButton}
+                />
+ 
           )}
         </View>
              <Image
@@ -347,16 +365,16 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
   );
 };
  
-  const renderCalendar = () => {
-    if (loading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.appLinear1} />
-          <CustomText style={styles.loadingText}>{t("vaccineLoading")}</CustomText>
-        </View>
-      );
-    }
-
+const renderCalendar = () => {
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.appLinear1} />
+        <CustomText style={styles.loadingText}>{t("vaccineLoading")}</CustomText>
+      </View>
+    );
+  }
+ 
     if (error) {
       return (
         <View style={styles.errorContainer}>
@@ -371,7 +389,9 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
             style={styles.retryButton}
             onPress={fetchVaccineData}
           >
+ 
             <CustomText style={styles.retryButtonText}>{t("retry")}</CustomText>
+ 
           </TouchableOpacity>
         </View>
       );
@@ -440,12 +460,15 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
               selectedRecords.map((record, index) => renderVaccineCard(record, index))
             ) : (
               <>
+ 
                 <CustomText style={styles.vaccineTitle}>{t("noVaccination")}</CustomText>
                 <CustomText style={styles.vaccineSubTitle}>{t("noVaccineAppointment")}</CustomText>
                 <CustomButton 
                   title={t("addVaccination")}
                   onPress={() => navigation.navigate("VaccinationForm" as any)} 
                   
+ 
+         
                 />
               </>
             )}
@@ -457,16 +480,16 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
           <View style={styles.legendContainer}>
             <View style={styles.legendItem}>
               <Icon name="injection-syringe" size={14} color="#22c55e" />
+ 
               <CustomText style={styles.legendText}>{t("completed")}</CustomText>
             </View>
             <View style={styles.legendItem}>
               <Icon name="injection-syringe" size={14} color="#f59e0b" />
               <CustomText style={styles.legendText}>{t("pending")}</CustomText>
             </View>
-            <View style={styles.legendItem}>
-              <Icon name="injection-syringe" size={14} color="#ef4444" />
-              <CustomText style={styles.legendText}>{t("overdue")}</CustomText>
-            </View>
+           
+           
+           
           </View>
         )}
       </ScrollView>

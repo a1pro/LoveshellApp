@@ -38,13 +38,13 @@ export type RootStackParamList = {
   SelectLanguages: undefined;
   HomeScreen: undefined;
 
-  Nutrition:undefined;
+  Nutrition: undefined;
   Meals: undefined;
   MealCalendar: undefined;
   AddmealScreen: undefined;
-  MealDetailScreen:undefined;
+  MealDetailScreen: undefined;
   RecipeScreen: undefined;
-  AiScreen: {data:any};
+  AiScreen: { data: any };
   Growth: undefined;
   Community: undefined;
   ViewAllPost: undefined;
@@ -54,14 +54,14 @@ export type RootStackParamList = {
   PercentaileScreen: undefined;
   Development: undefined;
   DetailDevelopment: undefined;
-  HeightAiScreen:{ selectedGrowthRecord: GrowthRecord };
-  PrankScreen:undefined;
-  Vaccination:undefined;
-  VaccinationCalendar:undefined;
-  VaccinationForm:undefined;
-    VaccinationUpdate: { vaccineData: VaccineData };
-    FoodChart:undefined;
-    BarcodeScreen:undefined;
+  HeightAiScreen: { selectedGrowthRecord: GrowthRecord };
+  PrankScreen: undefined;
+  Vaccination: undefined;
+  VaccinationCalendar: undefined;
+  VaccinationForm: undefined;
+  VaccinationUpdate: { vaccineData: VaccineData };
+  FoodChart: undefined;
+  BarcodeScreen: undefined;
   RecipeDetails: { recipe: RecipeItem };
   InternetScreen: undefined;
   AddnewTopic: undefined;
@@ -102,6 +102,7 @@ export type BottomTabParamList = {
   Child: undefined;
   Login: undefined;
 };
+
 export interface GradientBackgroundProps {
   children?: ReactNode;
   colors?: [string, string] | [string, string, string];
@@ -109,6 +110,7 @@ export interface GradientBackgroundProps {
   end?: { x: number; y: number };
   style?: ViewStyle;
 }
+
 export type SpacerProps = {
   size?: number;
   style?: ViewStyle;

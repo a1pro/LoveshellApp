@@ -62,44 +62,38 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
     return `${year}-${month}-${day}`;
   };
 
- 
+  const showToast = (
+    type: "success" | "error",
+    text1: string,
+    text2?: string
+  ) => {
+    Toast.show({
+      type,
+      text1,
+      text2,
+      position: "top",
+    });
+  };
 
   const handleSave = async () => {
-  
     if (!vaccineData?.id) {
-      Toast.show({
-        type:"error",
-        text1:t("vallidationError"),
-        text2:t("vaccinationRequired")
-      })
-       
+      showToast("error", t("vallidationError"), t("vaccinationRequired"));
       return;
     }
 
     if (!administeredDate) {
-         Toast.show({
-        type:"error",
-        text1:t("vallidationError"),
-        text2:t("datevalid")
-      })
-   
+      showToast("error", t("vallidationError"), t("datevalid"));
       return;
     }
 
     const token = await AsyncStorage.getItem("Usertoken");
     if (!token) {
-         Toast.show({
-        type:"error",
-        text1:t("errorTitle"),
-        text2:t("userTokenMissing")
-      })
-       
+      showToast("error", t("errorTitle"), t("userTokenMissing"));
       return;
     }
 
-    
     const payload = {
-      vaccination_ids: [vaccineData.id], 
+      vaccination_ids: [vaccineData.id],
       administered_date: formatDateForApi(administeredDate),
     };
 
@@ -119,35 +113,21 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
       );
 
       if (res?.data?.success) {
-        Toast.show({
-          type:"success",
-          text1:t("successTitle"),
-          text2: res.data.message ||t("vaccinationSuccess")
-
-        })
-         
-        
-       
+        showToast("success", t("successTitle"), res.data.message || t("vaccinationSuccess"));
         setTimeout(() => {
           navigation.goBack();
         }, 1500);
       } else {
-     Toast.show({
-         type: "error",
-         text1: t("errorTitle"),
-         text2: res?.data?.message || t("wrong")
-       } );
+        showToast("error", t("errorTitle"), res?.data?.message || t("wrong"));
       }
     } catch (error: any) {
       const msg =
         error?.response?.data?.message ||
         error?.message ||
         "Failed to update vaccination";
-      Toast.show({
-       type: "error",
-       text1: "Error",
-       text2: msg});
-      console.log("error updtae",msg)
+
+      showToast("error", "Error", msg);
+      console.log("error update", msg);
     } finally {
       setLoading(false);
     }
@@ -156,7 +136,8 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
   return (
     <GradientBackground>
       <View style={styles.container}>
-            <View style={styles.header}>
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity
             style={styles.backIcon}
             onPress={() => navigation.goBack()}
@@ -226,6 +207,7 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
 
           <Spacer style={{ height: 24 }} />
 
+          {/* Editable Administered Date */}
           <CustomInput
             label={t("adminDate")}
             placeholder={t("selectadminDate")}
@@ -247,6 +229,7 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
           <Spacer style={{ height: 20 }} />
         </ScrollView>
 
+        {/* Administered Date Picker */}
         <DatePicker
           modal
           open={isAdminDatePickerOpen}
@@ -257,7 +240,7 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
             setAdministeredDate(date);
           }}
           onCancel={() => setIsAdminDatePickerOpen(false)}
-          maximumDate={new Date()} 
+          maximumDate={new Date()} // Can't select future date for administration
         />
       </View>
     </GradientBackground>
