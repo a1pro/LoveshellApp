@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, TouchableOpacity, FlatList, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Image, TouchableOpacity, FlatList, ScrollView, Alert, ActivityIndicator, Modal, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from './style';
@@ -15,6 +15,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import ENDPOINTS, { API_URL } from '../../APIService/endPoints';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
+import DatePicker from 'react-native-date-picker';
+import GenderModal from '../../components/GenderModal';
+import VectorIcon from '../../components/VectorIcon';
 
 // API Response Types
 type ApiChildData = {
@@ -35,7 +39,7 @@ type ApiResponse = {
   total_children: number;
 };
 
-// Local Child Data Type
+// Local Child Data Type for List Tab
 type ChildData = {
   id: string;
   name: string;
@@ -44,11 +48,29 @@ type ChildData = {
   allergies: string;
 };
 
+// Type for Add Child Tab
+type AddChildData = {
+  id: number;
+  name: string;
+  email: string;
+  date: Date;
+  sex: string;
+  allergies: string;
+  weight: string;
+  weightUnit: string;
+  height: string;
+  heightUnit: string;
+};
+
 type Props = NativeStackScreenProps<BottomTabParamList, 'Child'>;
+
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
 });
+
+// Tab types
+type TabType = 'list' | 'add';
 
 const Children: React.FC<Props> = ({ navigation }) => {
   const [childrenData, setChildrenData] = useState<ChildData[]>([]);
@@ -56,7 +78,38 @@ const Children: React.FC<Props> = ({ navigation }) => {
   const [editingChildId, setEditingChildId] = useState<string | null>(null);
   const [editedData, setEditedData] = useState<ChildData | null>(null);
   const [userData, setUserData] = useState<any>(null);
-useEffect(() => {
+  const [activeTab, setActiveTab] = useState<TabType>('list');
+
+  // States for Add Child Tab
+  const [open, setOpen] = useState(false);
+  const [activeChildIndex, setActiveChildIndex] = useState<number | null>(null);
+  const [showGenderModal, setShowGenderModal] = useState(false);
+  const [genderModalIndex, setGenderModalIndex] = useState<number | null>(null);
+  const [showAllergyModal, setShowAllergyModal] = useState(false);
+  const [allergyModalIndex, setAllergyModalIndex] = useState<number | null>(null);
+  const [allergiesList, setAllergiesList] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingAllergies, setLoadingAllergies] = useState(false);
+
+  const { t } = useTranslation();
+
+  // Initial data for Add Child Tab
+  const [addChildren, setAddChildren] = useState<AddChildData[]>([
+    {
+      id: 1,
+      name: '',
+      email: '',
+      date: new Date(),
+      sex: 'Male',
+      allergies: 'None',
+      weight: '',
+      weightUnit: 'kg',
+      height: '',
+      heightUnit: 'cm',
+    },
+  ]);
+
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userDataString = await AsyncStorage.getItem('userData');
@@ -73,8 +126,7 @@ useEffect(() => {
     fetchUserData();
   }, []);
 
-
- const formatDate = (dateString: string): string => {
+  const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
       const day = date.getDate().toString().padStart(2, '0');
@@ -85,7 +137,8 @@ useEffect(() => {
       return dateString;
     }
   };
- useEffect(() => {
+
+  useEffect(() => {
     const requestInterceptor = api.interceptors.request.use(
       async (config) => {
         const token = await AsyncStorage.getItem('Usertoken');
@@ -106,7 +159,6 @@ useEffect(() => {
           await AsyncStorage.removeItem('Usertoken');
           await AsyncStorage.removeItem('userData');
           Alert.alert('Session Expired', 'Please login again');
-          // You might want to navigate to login screen here
         }
         return Promise.reject(error);
       }
@@ -118,74 +170,74 @@ useEffect(() => {
     };
   }, []);
 
-const fetchChildrenData = async () => {
-  try {
-    setLoading(true);
-    
-    const fullUrl = `${API_URL}${ENDPOINTS.getchild}`;
-    console.log('Full URL:', fullUrl);
-    
-    const response = await api.get(ENDPOINTS.getchild); 
-    
-    console.log('API Response:', response.data);
-    
-    if (response.data.status) {
-      const transformedData: ChildData[] = response.data.children.map((child: ApiChildData) => ({
-        id: child.id.toString(),
-        name: child.name,
-        dateOfBirth: formatDate(child.dob),
-        gender: child.sex,
-        allergies: child.allergies || 'No'
-      }));
+  const fetchChildrenData = async () => {
+    try {
+      setLoading(true);
       
-      setChildrenData(transformedData);
-      console.log('Transformed children data:', transformedData);
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: response.data.message || 'No children data found'
-      });
+      const fullUrl = `${API_URL}${ENDPOINTS.getchild}`;
+      console.log('Full URL:', fullUrl);
+      
+      const response = await api.get(ENDPOINTS.getchild); 
+      
+      console.log('API Response:', response.data);
+      
+      if (response.data.status) {
+        const transformedData: ChildData[] = response.data.children.map((child: ApiChildData) => ({
+          id: child.id.toString(),
+          name: child.name,
+          dateOfBirth: formatDate(child.dob),
+          gender: child.sex,
+          allergies: child.allergies || 'No'
+        }));
+        
+        setChildrenData(transformedData);
+        console.log('Transformed children data:', transformedData);
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: response.data.message || t("noChilddata")
+        });
+        setChildrenData([]);
+      }
+    } catch (error: any) {
+      console.error('API Error Details:', error);
+      
+      if (error.response) {
+        console.log('Error Response:', error.response);
+        console.log('Error Status:', error.response.status);
+        console.log('Error Data:', error.response.data);
+        
+        Toast.show({
+          type: 'error',
+          text1: 'Endpoint Not Found',
+          text2: 'Please check the API endpoint configuration'
+        });
+      } else if (error.request) {
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'Please check your internet connection'
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("failtoload")
+        });
+      }
+      
       setChildrenData([]);
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    console.error('API Error Details:', error);
-    
-    if (error.response) {
-      console.log('Error Response:', error.response);
-      console.log('Error Status:', error.response.status);
-      console.log('Error Data:', error.response.data);
-      
-      Toast.show({
-        type: 'error',
-        text1: 'Endpoint Not Found',
-        text2: 'Please check the API endpoint configuration'
-      });
-    } else if (error.request) {
-      Toast.show({
-        type: 'error',
-        text1: 'Network Error',
-        text2: 'Please check your internet connection'
-      });
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Failed to load children data'
-      });
-    }
-    
-    setChildrenData([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchChildrenData();
   }, []);
 
-
+  // Functions for List Tab
   const handleEditChild = (child: ChildData) => {
     setEditingChildId(child.id);
     setEditedData({ ...child });
@@ -218,24 +270,194 @@ const fetchChildrenData = async () => {
     try {
       console.log('Update all children data:', childrenData);
       
-
       setEditingChildId(null);
       setEditedData(null);
       
       Toast.show({
         type: 'success',
-        text1: 'Success',
-        text2: 'Children data updated successfully!'
+        text1: t("successTitle"),
+        text2: t("childDataupdated")
       });
     } catch (error: any) {
       console.error('Update Error:', error);
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Failed to update children data'
+        text1: t("errorTitle"),
+        text2: t("failchildDataupdated")
       });
     }
   };
+
+  // Functions for Add Child Tab
+  const fetchAllergies = async () => {
+    try {
+      setLoadingAllergies(true);
+      const token = await AsyncStorage.getItem('Usertoken');
+      const response = await axios.get(
+        `${API_URL}${ENDPOINTS.Allergies}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data.status) {
+        const names = response.data.data.map((item: any) => item.name);
+        setAllergiesList(['None', ...names]);
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: t("errorTitle"),
+        text2: t('failload'),
+      });
+    } finally {
+      setLoadingAllergies(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'add') {
+      fetchAllergies();
+    }
+  }, [activeTab]);
+
+  type AddChildField = 'name' | 'email';
+
+  const handleAddChildInputChange = (
+    index: number,
+    fieldName: AddChildField,
+    value: string
+  ) => {
+    setAddChildren(prev => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        [fieldName]: value,
+      };
+      return updated;
+    });
+  };
+
+  const handleDateChange = (index: number, selectedDate: Date) => {
+    setAddChildren(prev => {
+      const updated = [...prev];
+      updated[index].date = selectedDate;
+      return updated;
+    });
+  };
+
+  const addMoreChild = () => {
+    if (addChildren.length >= 6) {
+      if (Platform.OS === 'android') {
+        Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("childAdd"),
+        });
+      } else {
+           Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("childAdd"),
+        });
+         
+      }
+      return;
+    }
+    const newId = addChildren.length + 1;
+    setAddChildren(prev => [
+      ...prev,
+      {
+        id: newId,
+        name: '',
+        email: '',
+        date: new Date(),
+        sex: 'Male',
+        allergies: 'None',
+        weight: '',
+        weightUnit: 'kg',
+        height: '',
+        heightUnit: 'cm',
+      },
+    ]);
+  };
+
+  const removeAddChild = (id: number) => {
+    setAddChildren(prev => prev.filter(child => child.id !== id));
+  };
+
+  const handleRegisterChildren = async () => {
+    setIsSubmitting(true);
+    const formData = new FormData();
+
+    addChildren.forEach(child => {
+      formData.append('name[]', child.name);
+      formData.append('dob[]', child.date.toISOString().split('T')[0]);
+      formData.append('sex[]', child.sex);
+    
+      if (child.allergies === 'None') {
+        formData.append('allergies[]', '');
+      } else {
+        formData.append('allergies[]', child.allergies);
+      }
+      
+      formData.append('weight[]', child.weight);
+      formData.append('height[]', child.height);
+    });
+    
+    console.log("send data in api", formData);
+    
+    try {
+      const token = await AsyncStorage.getItem('Usertoken'); 
+      const response = await axios.post(
+        `${API_URL}${ENDPOINTS.childRegister}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.data.message) {
+        console.log("data", response.data);
+        Toast.show({
+          type: 'success',
+          text1: t("successTitle"),
+          text2: response.data.message,
+        });
+        
+        
+        setAddChildren([{
+          id: 1,
+          name: '',
+          email: '',
+          date: new Date(),
+          sex: 'Male',
+          allergies: 'None',
+          weight: '',
+          weightUnit: 'kg',
+          height: '',
+          heightUnit: 'cm',
+        }]);
+         
+        setActiveTab('list');
+        fetchChildrenData();
+      }
+    } catch (error: any) {
+      console.log(error.response?.data);
+      Toast.show({
+        type: 'error',
+        text1: t("errorTitle"),
+        text2: t("registerFail"),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const renderChildCard = (child: ChildData, index: number) => (
     <View key={child.id} style={styles.childCard}>
       <View style={styles.cardHeader}>
@@ -271,16 +493,15 @@ const fetchChildrenData = async () => {
         )}
       </View>
       <View style={styles.dataSection}>
-        {/* Name Field */}
         <View style={styles.fieldContainer}>
           <CustomText type="small" fontWeight="500" color={COLORS.darkgrey} style={styles.label}>
-            Name
+            {t("name")}
           </CustomText>
           {editingChildId === child.id ? (
             <CustomInput
               value={editedData?.name || ''}
               onChangeText={(value) => handleInputChange('name', value)}
-              placeholder="Enter name"
+              placeholder={t("enterName")}
               style={styles.inputContainer}
             />
           ) : (
@@ -290,12 +511,10 @@ const fetchChildrenData = async () => {
           )}
         </View>
 
-        {/* Date of Birth and Gender Row */}
         <View style={styles.rowContainer}>
-          {/* Date of Birth */}
           <View style={styles.halfField}>
             <CustomText type="small" fontWeight="500" color={COLORS.darkgrey} style={styles.label}>
-              Date of Birth
+              {t("dob")}
             </CustomText>
             {editingChildId === child.id ? (
               <CustomInput
@@ -311,16 +530,15 @@ const fetchChildrenData = async () => {
             )}
           </View>
 
-          {/* Gender */}
           <View style={styles.halfField}>
             <CustomText type="small" fontWeight="500" color={COLORS.darkgrey} style={styles.label}>
-              Sex
+              {t("sex")}
             </CustomText>
             {editingChildId === child.id ? (
               <CustomInput
                 value={editedData?.gender || ''}
                 onChangeText={(value) => handleInputChange('gender', value)}
-                placeholder="Gender"
+                placeholder={t("gender")}
                 style={styles.inputContainer}
               />
             ) : (
@@ -330,17 +548,16 @@ const fetchChildrenData = async () => {
             )}
           </View>
         </View>
-
-        {/* Allergies */}
+ 
         <View style={styles.fieldContainer}>
           <CustomText type="small" fontWeight="500" color={COLORS.darkgrey} style={styles.label}>
-            Allergies
+            {t("allergies")}
           </CustomText>
           {editingChildId === child.id ? (
             <CustomInput
               value={editedData?.allergies || ''}
               onChangeText={(value) => handleInputChange('allergies', value)}
-              placeholder="Allergies"
+              placeholder={t("allergies")}
               style={styles.inputContainer}
             />
           ) : (
@@ -353,7 +570,342 @@ const fetchChildrenData = async () => {
     </View>
   );
 
-  if (loading) {
+   
+  const renderAddChildTab = () => (
+    <ScrollView 
+      style={styles.addChildScrollView}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.addChildScrollContent}
+    >
+      {addChildren.map((child, index) => (
+        <View key={child.id} style={styles.addChildCard}>
+          <View style={styles.deleteview}>
+            <CustomText
+              type="subTitle"
+              fontWeight="bold"
+              style={[styles.childNumberText, { textAlign: 'left' }]}
+            >
+              {t('child')} {index + 1}
+            </CustomText>
+            {addChildren.length > 1 && (
+              <TouchableOpacity onPress={() => removeAddChild(child.id)}>
+                <VectorIcon
+                  type="MaterialIcons"
+                  name="remove-circle"
+                  size={24}
+                  color={COLORS.red}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View style={styles.addChildForm}>
+            <CustomInput
+              label={t('name')}
+              placeholder="Name"
+              onChangeText={value => handleAddChildInputChange(index, 'name', value)}
+              value={child.name}
+              style={styles.addChildInput}
+            />
+
+            <View style={styles.genderAllergyRow}>
+              <View style={styles.genderContainer}>
+                <CustomText type="small">{t('gender')}</CustomText>
+                <TouchableOpacity
+                  style={styles.selectionButton}
+                  onPress={() => {
+                    setGenderModalIndex(index);
+                    setShowGenderModal(true);
+                  }}
+                  activeOpacity={0.5}
+                >
+                  <CustomText color={COLORS.black} type="small">
+                    {child.sex || t("genderselect")}
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.allergyContainer}>
+                <CustomText type="small">{t('allergies')}</CustomText>
+                <TouchableOpacity
+                  style={styles.selectionButton}
+                  onPress={() => {
+                    setAllergyModalIndex(index);
+                    setShowAllergyModal(true);
+                  }}
+                  activeOpacity={0.5}
+                >
+                  <CustomText color={COLORS.black} type="small">
+                    {child.allergies}
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <CustomText
+              type="small"
+              color={COLORS.black}
+              fontWeight={'500'}
+            >
+              {t('dob')}
+            </CustomText>
+
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={() => {
+                setActiveChildIndex(index);
+                setOpen(true);
+              }}
+            >
+              <CustomText
+                type="small"
+                color={COLORS.black}
+                fontWeight={'500'}
+              >
+                {child.date
+                  ? child.date.toLocaleDateString()
+                  : t('dob')}
+              </CustomText>
+              <VectorIcon
+                type="MaterialIcons"
+                name="date-range"
+                size={20}
+                color={COLORS.darkgrey}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.weightHeightRow}>
+              <View style={styles.weightContainer}>
+                <CustomInput
+                  label={t('weight')}
+                  placeholder="Weight"
+                  keyboardType="numeric"
+                  onChangeText={value => {
+                    const updated = [...addChildren];
+                    updated[index].weight = value;
+                    setAddChildren(updated);
+                  }}
+                  value={child.weight}
+                  style={styles.smallInput}
+                />
+              </View>
+              <View style={styles.unitContainer}>
+                <CustomInput
+                  disabled
+                  label={t("unit")}
+                  placeholder="Unit"
+                  value={child.weightUnit}
+                  style={styles.unitInput}
+                  onChangeText={()=>('')}
+                />
+              </View>
+              <View style={styles.heightContainer}>
+                <CustomInput
+                  label={t('height')}
+                  placeholder="Height"
+                  keyboardType="numeric"
+                  onChangeText={value => {
+                    const updated = [...addChildren];
+                    updated[index].height = value;
+                    setAddChildren(updated);
+                  }}
+                  value={child.height}
+                  style={styles.smallInput}
+                />
+              </View>
+              <View style={styles.unitContainer}>
+                <CustomInput
+                  disabled
+                  label={t("unit")}
+                  placeholder="Unit"
+                  value={child.heightUnit}
+                  style={styles.unitInput}
+                  onChangeText={()=>('')}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+      ))}
+
+      <TouchableOpacity 
+        style={styles.addMoreButton}
+        onPress={addMoreChild}
+      >
+        <CustomText
+          type="small"
+          color={COLORS.blue}
+          style={{ textAlign: 'center' }}
+        >
+          {t('addmoreChild')}
+        </CustomText>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.registerButton}
+        onPress={handleRegisterChildren}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <ActivityIndicator size="small" color={COLORS.White} />
+        ) : (
+          <CustomText
+            type="title"
+            fontWeight="700"
+            color={COLORS.White}
+          >
+            {t('registerChildren')}
+          </CustomText>
+        )}
+      </TouchableOpacity>
+
+      {/* Date Picker Modal */}
+      <DatePicker
+        modal
+        mode="date"
+        open={open}
+        date={
+          activeChildIndex !== null
+            ? addChildren[activeChildIndex].date
+            : new Date()
+        }
+        onConfirm={date => {
+          if (activeChildIndex !== null)
+            handleDateChange(activeChildIndex, date);
+          setOpen(false);
+          setActiveChildIndex(null);
+        }}
+        onCancel={() => {
+          setOpen(false);
+          setActiveChildIndex(null);
+        }}
+      />
+
+      {/* Gender Modal */}
+      <GenderModal
+        visible={showGenderModal}
+        selectedGender={
+          genderModalIndex !== null ? addChildren[genderModalIndex].sex : ''
+        }
+        onSelect={(selected: string) => {
+          if (genderModalIndex !== null) {
+            const updated = [...addChildren];
+            updated[genderModalIndex].sex = selected;
+            setAddChildren(updated);
+            setShowGenderModal(false);
+            setGenderModalIndex(null);
+          }
+        }}
+        onCancel={() => {
+          setShowGenderModal(false);
+          setGenderModalIndex(null);
+        }}
+      />
+
+      {/* Allergy Modal */}
+      <Modal
+        transparent
+        visible={showAllergyModal}
+        animationType="slide"
+        onRequestClose={() => setShowAllergyModal(false)}
+      >
+        <View style={styles.allergyModalOverlay}>
+          <View style={styles.allergyModalContent}>
+            <CustomText
+              type="subHeading"
+              style={{ textAlign: 'center', marginBottom: 10 }}
+            >
+              {t("selectAllergy")}
+            </CustomText>
+
+            {loadingAllergies ? (
+              <ActivityIndicator size="large" color={COLORS.black} />
+            ) : (
+              <FlatList
+                data={allergiesList}
+                keyExtractor={item => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.allergyItem}
+                    onPress={() => {
+                      if (allergyModalIndex !== null) {
+                        const updated = [...addChildren];
+                        updated[allergyModalIndex].allergies = item;
+                        setAddChildren(updated);
+                        setShowAllergyModal(false);
+                        setAllergyModalIndex(null);
+                      }
+                    }}
+                  >
+                    <CustomText 
+                      type="small" 
+                      color={item === 'None' ? COLORS.grey : COLORS.black}
+                      fontWeight={item === 'None' ? 'bold' : 'normal'}
+                    >
+                      {item}
+                    </CustomText>
+                  </TouchableOpacity>
+                )}
+              />
+            )}
+
+            <TouchableOpacity
+              style={styles.cancelAllergyButton}
+              onPress={() => setShowAllergyModal(false)}
+            >
+              <CustomText color={COLORS.red}>{t("cancel")}</CustomText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
+  );
+
+  // Render Child List Tab Content
+  const renderChildListTab = () => (
+    <>
+      {childrenData.map((child, index) => renderChildCard(child, index))}
+      
+      {childrenData.length > 0 && (
+        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateAll}>
+          <CustomText
+            type="title"
+            fontWeight="700"
+            color={COLORS.White}
+          >
+            {t("update")}
+          </CustomText>
+        </TouchableOpacity>
+      )}
+
+      {childrenData.length === 0 && (
+        <View style={styles.emptyState}>
+          <CustomText
+            type="subHeading"
+            fontWeight="500"
+            color={COLORS.darkgrey}
+            style={styles.emptyText}
+          >
+            {t("noChild")}
+          </CustomText>
+          <TouchableOpacity 
+            style={styles.refreshButton}
+            onPress={fetchChildrenData}
+          >
+            <CustomText
+              type="small"
+              fontWeight="600"  
+              color={COLORS.black}
+            >
+              {t("refresh")}
+            </CustomText>
+          </TouchableOpacity>
+        </View>
+      )}
+    </>
+  );
+
+  if (loading && activeTab === 'list') {
     return (
       <LinearGradient
         colors={[COLORS.appLinear1, COLORS.appLinear2]}
@@ -361,7 +913,7 @@ const fetchChildrenData = async () => {
       >
         <SafeAreaView style={styles.container}>
           <View style={styles.loadingContainer}>
-           <ActivityIndicator size="large" color={COLORS.blue} />
+            <ActivityIndicator size="large" color={COLORS.blue} />
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -374,7 +926,6 @@ const fetchChildrenData = async () => {
       style={styles.linearContainer}
     >
       <SafeAreaView style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <CustomText
             type="heading"
@@ -390,56 +941,53 @@ const fetchChildrenData = async () => {
             color={COLORS.black}
             style={styles.subTitle}
           >
-            Change Children's Data
+            {activeTab === 'list' ? t("changeChildData") : t("addNewChild")}
           </CustomText>
         </View>
 
-        {/* Children List */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity 
+            style={[
+              styles.tabButton, 
+              activeTab === 'list' && styles.activeTabButton
+            ]}
+            onPress={() => setActiveTab('list')}
+          >
+            <CustomText
+              type="title"
+              fontWeight="700"
+              color={activeTab === 'list' ? COLORS.White : COLORS.black}
+            >
+              {t("childList")}
+            </CustomText>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[
+              styles.tabButton, 
+              activeTab === 'add' && styles.activeTabButton
+            ]}
+            onPress={() => setActiveTab('add')}
+          >
+            <CustomText
+              type="title"
+              fontWeight="700"
+              color={activeTab === 'add' ? COLORS.White : COLORS.black}
+            >
+              {t("addChild")}
+            </CustomText>
+          </TouchableOpacity>
+        </View>
+
         <ScrollView 
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            activeTab === 'add' && styles.addTabScrollContent
+          ]}
         >
-          {childrenData.map((child, index) => renderChildCard(child, index))}
-          
-          {/* Update Button */}
-          {childrenData.length > 0 && (
-            <TouchableOpacity style={styles.updateButton} onPress={handleUpdateAll}>
-              <CustomText
-                type="title"
-                fontWeight="700"
-                color={COLORS.White}
-              >
-                Update
-              </CustomText>
-            </TouchableOpacity>
-          )}
-
-          {/* Empty State */}
-          {childrenData.length === 0 && (
-            <View style={styles.emptyState}>
-              <CustomText
-                type="subHeading"
-                fontWeight="500"
-                color={COLORS.darkgrey}
-                style={styles.emptyText}
-              >
-                No children data available
-              </CustomText>
-              <TouchableOpacity 
-                style={styles.refreshButton}
-                onPress={fetchChildrenData}
-              >
-                <CustomText
-                  type="small"
-                  fontWeight="600"  
-                    color={COLORS.black}
-                >
-                  Refresh
-                </CustomText>
-              </TouchableOpacity>
-            </View>
-          )}
+          {activeTab === 'list' ? renderChildListTab() : renderAddChildTab()}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

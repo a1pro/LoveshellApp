@@ -7,6 +7,7 @@ const COLORS = {
   inputBackground: '#F8F8F8',
   placeholder: '#D2D2D2',
   red: '#F53030',
+  red2:"#F44336",
   inputBorder: "#C3EBFF",
   shottxt: "#6C7278",
   blue: "#4D81E7",
@@ -22,6 +23,25 @@ const COLORS = {
   lightyellow:"#F8EFC6" ,
   navyblue:"#156082",
   orange:"#E97132",
+  lightorange:"#FDD0B1",
+  purple:"#B400A0",
+  green:"#018D61",
+  skincolor:"#FBDDC1",
+  orange2:"#FF7E00",
+  lightblue3:"#BCE2EA",
+  yellow2:"#FCF2B5",
+  grey2:"#DAD1F0",
+  green2:"#CBEBC7",
+  darkgreen:"#30B700",
+  darkgreen2:"#4CAF50",
+  lightpink:"#F9C3CE",
+  darkred:"#490803ff",
+  blue3:"#2652ccff",
+  yellow3:"#FF9800",
+  bordercolor:"#ddd", 
+  lightblue4:"#C4E4F4",
+  newPink:"#FF00004D"
+  
   
 };
 

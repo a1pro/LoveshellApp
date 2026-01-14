@@ -80,11 +80,11 @@ const MealCalendar: React.FC<Props> = ({ navigation }) => {
 
   const getIconColor = (quality_status: string) => {
     switch (quality_status) {
-      case "good": return "#4CAF50";
-      case "fair": return "#2652ccff";
-      case "poor": return "#F44336";
-      case "bad": return "#490803ff";
-      case "missing": return "#FF9800";
+      case "good": return COLORS.darkgreen2;
+      case "fair": return COLORS.blue3;
+      case "poor": return COLORS.red2;
+      case "bad": return COLORS.darkred;
+      case "missing": return COLORS.yellow3;
       default: return "#BDBDBD";
     }
   };
@@ -118,7 +118,7 @@ const MealCalendar: React.FC<Props> = ({ navigation }) => {
         {info && getIconName(info.quality_status) && (
           <VectorIcon
             type="FontAwesome"
-            name={getIconName(info.quality_status)}
+            name={getIconName(info.quality_status) || "circle"}
             size={14}
             color={getIconColor(info.quality_status)}
             style={styles.dayIcon}
@@ -179,49 +179,48 @@ const MealCalendar: React.FC<Props> = ({ navigation }) => {
                     </View>
                   );
                 }}
-                dayComponent={renderDayComponent}  // **CORRECT PROP**
+                dayComponent={renderDayComponent}  
               />
             )}
           </View>
 
           <Spacer size={30} />
 
-          {/* Legend */}
           <View style={styles.legendContainer}>
             <CustomText type="subHeading" fontFamily="semiBold" style={styles.legendTitle}>
               {t("legend")}
             </CustomText>
             <Spacer size={15} />
             <View style={styles.legendItem}>
-              <VectorIcon type="FontAwesome" name="check-square" size={20} color="#4CAF50" style={styles.legendIcon} />
+              <VectorIcon type="FontAwesome" name="check-square" size={20} color={COLORS.darkgreen2} style={styles.legendIcon} />
               <CustomText type="small" fontFamily="regular" style={styles.legendText}>
                 {t("goodnutrientbalance")}
               </CustomText>
             </View>
             <View style={styles.legendItem}>
-              <VectorIcon type="FontAwesome" name="thumbs-down" size={20} color="#F44336" style={styles.legendIcon} />
+              <VectorIcon type="FontAwesome" name="thumbs-down" size={20} color={COLORS.red2} style={styles.legendIcon} />
               <CustomText type="small" fontFamily="regular" style={styles.legendText}>
                 {t("poornutrientbalance")}
               </CustomText>
             </View>
             <View style={styles.legendItem}>
-              <VectorIcon type="FontAwesome" name="warning" size={20} color="#FF9800" style={styles.legendIcon} />
+              <VectorIcon type="FontAwesome" name="warning" size={20} color={COLORS.yellow3} style={styles.legendIcon} />
               <CustomText type="small" fontFamily="regular" style={styles.legendText}>
                 {t("missingnutrientdata")}
               </CustomText>
             </View>
-            <View style={styles.legendItem}>
-              <VectorIcon type="FontAwesome" name="meh-o" size={20} color="#2652ccff" style={styles.legendIcon} />
+            {/* <View style={styles.legendItem}>
+              <VectorIcon type="FontAwesome" name="meh-o" size={20} color={COLORS.blue3} style={styles.legendIcon} />
               <CustomText type="small" fontFamily="regular" style={styles.legendText}>
                 {t("fairnutrients")}
               </CustomText>
             </View>
             <View style={styles.legendItem}>
-              <VectorIcon type="FontAwesome" name="close" size={20} color="#490803ff" style={styles.legendIcon} />
+              <VectorIcon type="FontAwesome" name="close" size={20} color={COLORS.darkred} style={styles.legendIcon} />
               <CustomText type="small" fontFamily="regular" style={styles.legendText}>
                 {t("badnutrients")}
               </CustomText>
-            </View>
+            </View> */}
           </View>
 
           <Spacer size={20} />

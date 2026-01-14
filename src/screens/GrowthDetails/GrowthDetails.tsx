@@ -45,15 +45,15 @@ const GrowthDetails: React.FC<Props> = ({ navigation }) => {
                 </View>
                 <Spacer size={20} />
                 <View style={styles.gridContainer}>
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#F8EFC6" }]} onPress={() => navigation.navigate('WeightScreen')}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightyellow }]} onPress={() => navigation.navigate('WeightScreen')}>
                             <Image source={IMAGES.child} style={styles.cardIcon} />
-                            <CustomText type="subHeading" style={[styles.cardText,{color:"#E97132"}]}>{t("WeightandHeight")}</CustomText>
+                            <CustomText type="subHeading" style={[styles.cardText,{color:COLORS.orange}]}>{t("WeightandHeight")}</CustomText>
                         </TouchableOpacity>
                        
 
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#C3EDBF" }]} onPress={()=>navigation.navigate('PercentaileScreen')}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightGreen}]} onPress={()=>navigation.navigate('PercentaileScreen')}>
                             <Image source={IMAGES.foodboard} style={styles.cardIcon} />
-                            <CustomText type="subHeading" style={[styles.cardText,{color:"#156082"}]}>{t("PercentileCharts")}</CustomText>
+                            <CustomText type="subHeading" style={[styles.cardText,{color:COLORS.navyblue}]}>{t("PercentileCharts")}</CustomText>
                         </TouchableOpacity>
  
                 </View>

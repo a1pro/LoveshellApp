@@ -59,22 +59,22 @@ const Meals: React.FC<Props> = ({ navigation }) => {
                 <View style={styles.gridContainer}>
                         <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightyellow }]} onPress={() => navigation.navigate('MealCalendar')}>
                             <Image source={IMAGES.meal} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#E97132"}]}>{t("meals")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.orange}]}>{t("meals")}</CustomText>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightred }]} onPress={()=>navigation.navigate('RecipeScreen')}>
                             <Image source={IMAGES.receipe} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#B400A0"}]}>{t('recipe')}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.purple}]}>{t('recipe')}</CustomText>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightblue2 }]}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightblue2 }]} onPress={()=>navigation.navigate("FoodChart")}>
                             <Image source={IMAGES.foodboard} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#156082"}]}>{t("foodboard")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.navyblue}]}>{t("foodboard")}</CustomText>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightGreen }]}>
+                        {/* <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightGreen }]}>
                             <Image source={IMAGES.consltant} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#018D61"}]}>{t("consultant")}</CustomText>
-                        </TouchableOpacity>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.green}]}>{t("consultant")}</CustomText>
+                        </TouchableOpacity> */}
                 </View>
 
             </View>

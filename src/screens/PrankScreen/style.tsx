@@ -82,5 +82,17 @@ const styles = StyleSheet.create({
     color: COLORS.black,
     fontSize: 20,
   },
+    loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: verticalScale(10),
+    color: COLORS.black,
+    fontSize: verticalScale(16),
+    textAlign: 'center',
+    fontFamily: "Poppins-Medium",
+  },
 }); 
 export default styles;

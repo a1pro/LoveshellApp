@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-      const [userData, setUserData] = useState<string>('');
+      const [userData, setUserData] = useState<{ username: string } | null>(null);
        const { t } = useTranslation();
  useEffect(() => {
     const fetchUserData = async () => {
@@ -61,32 +61,32 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <Spacer size={20} />
 
                     <View style={styles.gridContainer}>
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#FBDDC1" }]} onPress={() => navigation.navigate('Nutrition')}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.skincolor}]} onPress={() => navigation.navigate('Nutrition')}>
                             <Image source={IMAGES.nutrition} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#FF7E00"}]}>{t("nutrition")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.orange2}]}>{t("nutrition")}</CustomText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#BCE2EA" }]} onPress={()=>navigation.navigate("Vaccination")}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightblue3 }]} onPress={()=>navigation.navigate("Vaccination")}>
                             <Image source={IMAGES.vaccine} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#156082"}]}>{t("vaccination")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.navyblue}]}>{t("vaccination")}</CustomText>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#FCF2B5" }]} onPress={()=>navigation.navigate('Growth')}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.yellow2 }]} onPress={()=>navigation.navigate('Growth')}>
                             <Image source={IMAGES.bottle} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#E97132"}]}>{t("growth")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.orange}]}>{t("growth")}</CustomText>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#DAD1F0" }]}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.grey2 }]} onPress={()=>navigation.navigate('Community')}>
                             <Image source={IMAGES.community} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#156082"}]}>{t("community")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.navyblue}]}>{t("community")}</CustomText>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#CBEBC7" }]} onPress={()=>navigation.navigate('Development')}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.green2 }]} onPress={()=>navigation.navigate('Development')}>
                             <Image source={IMAGES.baby} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#30B700"}]}>{t("development")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.darkgreen}]}>{t("development")}</CustomText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.card, { backgroundColor: "#F9C3CE" }]}>
+                        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.lightpink }]} onPress={()=>navigation.navigate('InternetScreen')}>
                             <Image source={IMAGES.internet} style={styles.cardIcon} />
-                            <CustomText type="small" style={[styles.cardText,{color:"#B400A0"}]}>{("internet")}</CustomText>
+                            <CustomText type="small" style={[styles.cardText,{color:COLORS.purple}]}>{("internet")}</CustomText>
                         </TouchableOpacity>
 
                     </View>

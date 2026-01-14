@@ -52,41 +52,52 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const showToast = (
-    type: "success" | "error",
-    text1: string,
-    text2?: string
-  ) => {
-    Toast.show({
-      type,
-      text1,
-      text2,
-      position: "top",
-    });
-  };
 
   const handleSave = async () => {
     // validations
     if (!selectedChild?.id) {
-      showToast("error", "Error", "Child id is required");
+         Toast.show({
+        type:"error",
+        text1:t("vallidationError"),
+        text2:t("childId")
+      })
+       
       return;
     }
     if (!vaccineName.trim()) {
-      showToast("error", "Validation", "Vaccine name field is required");
+         Toast.show({
+        type:"error",
+        text1:t("vallidationError"),
+        text2:t("vaccineRequired")
+      }) 
       return;
     }
     if (!doseNumber.trim()) {
-      showToast("error", "Validation", "Dose number field is required");
+         Toast.show({
+        type:"error",
+        text1:t("vallidationError"),
+        text2:t("doesRequired")
+      }) 
       return;
     }
     if (!dueDate) {
-      showToast("error", "Validation", "Due date is required");
+      Toast.show({
+        type:"error",
+        text1:t("vallidationError"),
+        text2:t("dueDateRequired")
+      }) 
+      
       return;
     }
 
     const token = await AsyncStorage.getItem("Usertoken");
     if (!token) {
-      showToast("error", "Error", "User token not found");
+      Toast.show({
+        type:"error",
+        text1:t("errorTitle"),
+        text2:t("userTokenMissing")
+      }) 
+    ;
       return;
     }
 
@@ -117,7 +128,11 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
       );
 
       if (res?.data?.success) {
-        showToast("success", "Success", "Vaccination created successfully");
+        Toast.show({
+        type:"error",
+        text1:t("successTitle"),
+        text2:t("vaccinationCreate")
+      })  
 
         // reset form
         setVaccineName("");
@@ -128,18 +143,22 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
 
         navigation.goBack();
       } else {
-        showToast(
-          "error",
-          "Error",
-          res?.data?.message || "Something went wrong"
-        );
+        Toast.show({
+         type: "error",
+          text1:"Error",
+         text2: res?.data?.message || t("wrong")
+      });
       }
     } catch (error: any) {
       const msg =
         error?.response?.data?.message ||
         error?.message ||
         "Failed to create vaccination";
-      showToast("error", "Error", msg);
+
+      Toast.show({ 
+        type:"error",
+        text1: t("errorTitle"),
+        text2: msg});
     } finally {
       setLoading(false);
     }
@@ -167,7 +186,7 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
             fontFamily="semiBold"
             style={styles.headerTitle}
           >
-            {t("Add Vaccination")}
+            {t("addVaccination")}
           </CustomText>
 
           <TouchableOpacity
@@ -191,8 +210,8 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
           contentContainerStyle={styles.formContainer}
         >
           <CustomInput
-            label={t("Vaccine Name")}
-            placeholder={t("Enter vaccine name")}
+            label={t("vaccineName")}
+            placeholder={t("entervaccineName")}
             value={vaccineName}
             onChangeText={setVaccineName}
           />
@@ -200,8 +219,8 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
           <Spacer style={{ height: 12 }} />
 
           <CustomInput
-            label={t("Dose Number")}
-            placeholder={t("Enter dose number")}
+            label={t("doseNumber")}
+            placeholder={t("doesNumber")}
             value={doseNumber}
             keyboardType="numeric"
             onChangeText={setDoseNumber}
@@ -211,8 +230,8 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
 
           {/* Due Date */}
           <CustomInput
-            label={t("Due Date")}
-            placeholder={t("Select due date")}
+            label={t("dueDate")}
+            placeholder={t("dueDate")}
             type="date"
             value={formatDateForDisplay(dueDate)}
             onChangeText={() => {}}
@@ -225,8 +244,8 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
          
 
           <CustomInput
-            label={t("Administered Date")}
-            placeholder={t("Select administered date")}
+            label={t("adminDate")}
+            placeholder={t("adminDate")}
             type="date"
             value={formatDateForDisplay(administeredDate)}
             onChangeText={() => {}}
@@ -237,7 +256,7 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
           <Spacer style={{ height: 30 }} />
 
           <CustomButton
-            title={loading ? "Saving..." : "Add Vaccination"}
+            title={loading ? t("saving") : t("addVaccination")}
             disabled={loading}
             onPress={handleSave}
           />
@@ -257,8 +276,7 @@ const VaccinationForm: React.FC<Props> = ({ navigation }) => {
           }}
           onCancel={() => setIsDueDatePickerOpen(false)}
         />
-
-        {/* Administered Date Picker */}
+ 
         <DatePicker
           modal
           open={isAdminDatePickerOpen}

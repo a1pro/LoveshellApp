@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
   },
   childTextActive: {
-    color: COLORS.White,
+    color: COLORS.black,
     fontFamily: "Poppins-SemiBold",
   },
 
@@ -108,8 +108,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(25),
     paddingHorizontal: horizontalScale(20),
   },
-
-  // Card + Image grid (like screenshot)
+ 
   cardContainer: {
     marginTop: verticalScale(10),
     marginHorizontal: horizontalScale(20),

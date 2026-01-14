@@ -78,11 +78,11 @@ const styles = StyleSheet.create({
   },
   childText: {
     fontSize: verticalScale(14),
-    color: COLORS.darkgrey,
+    color: COLORS.black,
     fontFamily: "Poppins-Medium",
   },
   childTextActive: {
-    color: COLORS.White,
+    color: COLORS.black,
     fontFamily: "Poppins-SemiBold",
   },
   productsSection: {

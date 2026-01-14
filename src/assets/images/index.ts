@@ -39,7 +39,24 @@ const IMAGES = {
   vaccination1: require('../images/vaccination1.jpg'),
   vaccination2: require('../images/vaccination2.jpg'),
   vaccination3: require('../images/vaccination3.jpg'),
-  vaccination4: require('../images/vaccination4.jpg')
+  vaccination4: require('../images/vaccination4.jpg'),
+  mother1: require('../images/mother1.png'),
+  mother2: require('../images/mother2.png'),
+  mother3: require('../images/mother3.png'),
+  mother4: require('../images/mother4.png'),
+  dummyuser: require('../images/dummyprofile.png'),
+  vacinechild:require("../images/vacinechild.png"),
+  prank11: require("../images/prank11.png"),
+  prank12: require("../images/prank12.png"),
+  prank13: require("../images/prank13.png"),
+  prank14: require("../images/prank14.png"),  
+  prank15: require("../images/prank15.png"),
+  prank16: require("../images/prank16.png"),
+  internet1: require("../images/internet1.png"),
+  internet2: require("../images/internet2.png"),
+  internet3: require("../images/internet3.png"),
+ 
+
 };
 
 export default IMAGES;

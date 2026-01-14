@@ -10,6 +10,24 @@ export interface VaccineData {
   name: string;
 }
 
+export interface RecipeItem {
+  web_links: any;
+  serving_suggestions: ReactNode;
+  total_time: ReactNode;
+  prep_time: ReactNode;
+  suggested_date: ReactNode;
+  meal_type: ReactNode;
+  nutritional_info: any;
+  id: string;
+  name: string;
+  description?: string;
+  ingredients?: string[];
+  instructions?: string[];
+  servings?: number;
+  prepTime?: number;
+  cookTime?: number;
+}
+
 export type RootStackParamList = {
   SplashScreen: undefined;
   WelcomeScreen: undefined;
@@ -19,6 +37,7 @@ export type RootStackParamList = {
   ChildRegister: undefined;
   SelectLanguages: undefined;
   HomeScreen: undefined;
+
   Nutrition:undefined;
   Meals: undefined;
   MealCalendar: undefined;
@@ -27,6 +46,9 @@ export type RootStackParamList = {
   RecipeScreen: undefined;
   AiScreen: {data:any};
   Growth: undefined;
+  Community: undefined;
+  ViewAllPost: undefined;
+  AddPost: undefined;
   GrowthDetails: undefined;
   WeightScreen: undefined;
   PercentaileScreen: undefined;
@@ -38,6 +60,39 @@ export type RootStackParamList = {
   VaccinationCalendar:undefined;
   VaccinationForm:undefined;
     VaccinationUpdate: { vaccineData: VaccineData };
+    FoodChart:undefined;
+    BarcodeScreen:undefined;
+  RecipeDetails: { recipe: RecipeItem };
+  InternetScreen: undefined;
+  AddnewTopic: undefined;
+  FeaturedTopic: undefined;
+  MyTopic: undefined;
+  PrankDetails: {
+    activityData: {
+      id: number;
+      child_id: number;
+      age_months: number;
+      activity_title: string;
+      activity_description: string;
+      materials_needed: string;
+      instructions: string;
+      benefits: string;
+      safety_notes: string;
+      difficulty_level: number;
+      duration_minutes: number;
+      ai_analysis?: string;
+      development_area: string;
+      suggested_date: string;
+      is_completed: boolean;
+      child_rating?: number | null;
+      parent_notes?: string | null;
+    };
+    dayInfo: {
+      date: string;
+      day_name: string;
+      day_short: string;
+    };
+  };
 };
 
 export type BottomTabParamList = {

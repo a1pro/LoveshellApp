@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ENDPOINTS, { API_URL } from "../../APIService/endPoints";
 import axios from "axios";
+import Toast from "react-native-toast-message";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WeightScreen'>;
 
@@ -114,7 +115,11 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
 
   const fetchGrowthHistory = async () => {
     if (!selectedChild?.id) {
-      Alert.alert("Error", "No child selected. Please select a child first.");
+      Toast.show({
+        type: "error",
+        text1: t("errorTitle"),
+        text2: t("nochildselected")
+      })
       return;
     }
 
@@ -122,7 +127,11 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('Usertoken');
       if (!token) {
-        Alert.alert("Error", "Authentication token not found.");
+        Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("userTokenMissing")
+        });
         return;
       }
 
@@ -138,17 +147,26 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
       );
 
       const result = response.data;
-      console.log("get growth data ",result)
-      
+      console.log("get growth data ", result)
+
       if (result.success) {
         setHistoryData(result.data.growth_records || []);
         setChildAge(result.data.child_info?.age_months?.toString() || "");
       } else {
-        Alert.alert("Error", result.message || "Failed to fetch growth history");
+        Toast.show({
+          type:"error",
+          text1:t("errorTitle"),
+          text2: result.message || t("failgrowthhistory")
+        })
+    
       }
     } catch (error: any) {
       console.error('API Error:', error);
-      Alert.alert("Error", "Failed to fetch growth history. Please try again.");
+      Toast.show({
+          type:"error",
+          text1:t("errorTitle"),
+          text2:t("failgrowthhistory")
+        })
     } finally {
       setLoading(false);
     }
@@ -174,7 +192,7 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(Platform.OS === 'ios'); // keep open for ios
+    setShowDatePicker(Platform.OS === 'ios');  
     if (selectedDate) {
       setForm(prev => ({ ...prev, date: selectedDate }));
     }
@@ -182,19 +200,37 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
 
   const validateForm = (): boolean => {
     if (!form.weight || isNaN(Number(form.weight))) {
-      Alert.alert("Validation Error", "Please enter a valid weight.");
+       Toast.show({
+          type:"error",
+          text1:t("vallidationError"),
+          text2:("vallidWeight")
+        })
+       
       return false;
     }
     if (!form.height || isNaN(Number(form.height))) {
-      Alert.alert("Validation Error", "Please enter a valid height.");
+      Toast.show({
+          type:"error",
+          text1:t("vallidationError"),
+          text2:("vallidHeight")
+        })
+      
       return false;
     }
     if (!form.date) {
-      Alert.alert("Validation Error", "Please select a valid date.");
+      Toast.show({
+          type:"error",
+          text1:t("vallidationError"),
+          text2:("vallidDate")
+        }) 
       return false;
     }
     if (!form.weightUnit || !form.heightUnit) {
-      Alert.alert("Validation Error", "Please select units for weight and height.");
+      Toast.show({
+          type:"error",
+          text1:t("vallidationError"),
+          text2:("vallidUnit")
+        }) 
       return false;
     }
     return true;
@@ -204,7 +240,12 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
     if (!validateForm()) return;
 
     if (!selectedChild?.id) {
-      Alert.alert("Error", "No child selected. Please select a child first.");
+       Toast.show({
+          type:"error",
+          text1:t("errorTitle"),
+          text2:t("nochildselected")
+        })
+     
       return;
     }
 
@@ -212,7 +253,11 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('Usertoken');
       if (!token) {
-        Alert.alert("Error", "Authentication token not found.");
+           Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("userTokenMissing")
+        });
         return;
       }
 
@@ -240,14 +285,29 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
       );
 
       if (response.data.success) {
-        Alert.alert("Success", "Growth recorded successfully!");
-        fetchGrowthHistory(); 
+         Toast.show({
+          type:"success",
+          text1:t("successTitle"),
+          text2: t("growthSuccess")
+        })
+        
+        fetchGrowthHistory();
       } else {
-        Alert.alert("Error", response.data.message || "Failed to save record.");
+           Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("Failedtosave")
+        });
+    
       }
     } catch (error: any) {
       console.error('error for save data ', error);
-      Alert.alert("Error", "Failed to save data. Please try again.");
+      Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("Failedtosave")
+        });
+   
     } finally {
       setLoading(false);
     }
@@ -265,7 +325,8 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
               type={item.type}
               placeholder={item.label}
               value={form.date.toLocaleDateString()}
-              editable={false}
+              disabled={false}
+              onChangeText={()=>('')}
               style={item.style}
             />
             <VectorIcon
@@ -304,7 +365,7 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
             onChangeText={val => setForm(prev => ({ ...prev, [item.key]: val } as FormState))}
             keyboardType={item.keyboardType}
             style={item.style}
-            editable={!isUnitField}
+            disabled={!isUnitField}
           />
           {isUnitField && (
             <VectorIcon
@@ -330,7 +391,7 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.modalOverlay}>
         <View style={styles.unitModal}>
           <View style={styles.modalHeader}>
-            <CustomText style={styles.modalTitle}>Select Unit</CustomText>
+            <CustomText style={styles.modalTitle}>{t("selectUnit")}</CustomText>
             <TouchableOpacity onPress={() => setShowUnitModal(false)}>
               <VectorIcon type="MaterialIcons" name="close" size={24} color={COLORS.grey} />
             </TouchableOpacity>
@@ -365,74 +426,74 @@ const WeightScreen: React.FC<Props> = ({ navigation }) => {
     </Modal>
   );
 
-const renderHistoryRow = (item: GrowthRecord, idx: number) => (
-  <View key={idx} style={styles.gridRow}>
-    <TouchableOpacity 
-      style={styles.consultantButton}
-      onPress={() => navigation.navigate('HeightAiScreen', { selectedGrowthRecord: { ...item, id: item.id.toString() } })}
-    >
-      <CustomText style={styles.consultantButtonText}>Consultant</CustomText>
-    </TouchableOpacity>
-    <CustomInput
-      style={styles.gridItem}
-      value={childAge}
-      placeholder="Age"
-      label="Age"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    <CustomInput
-      style={styles.gridItem}
-      value={item.weight}
-      placeholder="Weight"
-      label="Weight"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    <CustomInput
-      style={styles.gridUnitSmall}
-      value={item.weight_unit}
-      placeholder="Unit"
-      label="Unit"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    <CustomInput
-      style={styles.gridItem}
-      value={item.height}
-      placeholder="Height"
-      label="Height"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    <CustomInput
-      style={styles.gridUnitSmall}
-      value={item.height_unit}
-      placeholder="Unit"
-      label="Unit"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    <CustomInput
-      style={styles.gridItemSmall}
-      value={item.head_circumference}
-      placeholder="Head"
-      label="Head"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    <CustomInput
-      style={styles.gridUnitSmall}
-      value={item.head_circumference_unit}
-      placeholder="Unit"
-      label="Unit"
-      onChangeText={() => {}}
-      editable={false}
-    />
-    {/* Consultant Button */}
-    
-  </View>
-);
+  const renderHistoryRow = (item: GrowthRecord, idx: number) => (
+    <View key={idx} style={styles.gridRow}>
+      <TouchableOpacity
+        style={styles.consultantButton}
+        onPress={() => navigation.navigate('HeightAiScreen', { selectedGrowthRecord: { ...item, id: item.id.toString() } })}
+      >
+        <CustomText style={styles.consultantButtonText}>{t("consultant")}</CustomText>
+      </TouchableOpacity>
+      <CustomInput
+        style={styles.gridItem}
+        value={childAge}
+        placeholder={t("age")}
+        label={t("age")}
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      <CustomInput
+        style={styles.gridItem}
+        value={item.weight}
+        placeholder={t("weight")}
+        label={t("weight")}
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      <CustomInput
+        style={styles.gridUnitSmall}
+        value={item.weight_unit}
+        placeholder={t("unit")}
+        label={t("unit")}
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      <CustomInput
+        style={styles.gridItem}
+        value={item.height}
+        placeholder={t("height")}
+        label={t("height")}
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      <CustomInput
+        style={styles.gridUnitSmall}
+        value={item.height_unit}
+        placeholder={t("unit")}
+        label={t("unit")}
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      <CustomInput
+        style={styles.gridItemSmall}
+        value={item.head_circumference}
+        placeholder="Head"
+        label="Head"
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      <CustomInput
+        style={styles.gridUnitSmall}
+        value={item.head_circumference_unit}
+        placeholder="Unit"
+        label="Unit"
+        onChangeText={() => { }}
+        disabled={false}
+      />
+      {/* Consultant Button */}
+
+    </View>
+  );
   return (
     <GradientBackground>
       <ScrollView>
@@ -442,7 +503,7 @@ const renderHistoryRow = (item: GrowthRecord, idx: number) => (
               <VectorIcon type="MaterialIcons" name="arrow-back-ios" size={25} color={COLORS.White} />
             </TouchableOpacity>
             <CustomText type="heading" fontFamily="semiBold" style={styles.headerTitle}>
-              {t("Weight & Height")}
+              {t("weight")}&{t("height")}
             </CustomText>
             <TouchableOpacity style={styles.backIcon} onPress={() => navigation.navigate('HomeScreen')}>
               <VectorIcon type="MaterialIcons" name="home" size={25} color={COLORS.White} />
@@ -477,7 +538,7 @@ const renderHistoryRow = (item: GrowthRecord, idx: number) => (
               disabled={loading}
             >
               <CustomText style={styles.saveButtonText}>
-                {loading ? "Saving..." : "Save Data"}
+                {loading ? t("saving") : t("saveData")}
               </CustomText>
             </TouchableOpacity>
           </View>
@@ -487,7 +548,7 @@ const renderHistoryRow = (item: GrowthRecord, idx: number) => (
           <View style={styles.dataCard}>
             <CustomText style={styles.cardTitle}>{t("HistoricData")}</CustomText>
             {loading ? (
-              <CustomText style={styles.loadingText}>Loading history...</CustomText>
+              <CustomText style={styles.loadingText}>{t("loadingHistory")}</CustomText>
             ) : historyData.length > 0 ? (
               <ScrollView
                 horizontal
@@ -495,12 +556,12 @@ const renderHistoryRow = (item: GrowthRecord, idx: number) => (
                 contentContainerStyle={styles.historyScrollContent}
               >
                 <View style={styles.gridTable}>
-                  
+
                   {historyData.map((item, idx) => renderHistoryRow(item, idx))}
                 </View>
               </ScrollView>
             ) : (
-              <CustomText style={styles.noDataText}>No history data available</CustomText>
+              <CustomText style={styles.noDataText}>{t("noHistory")}</CustomText>
             )}
           </View>
           <Spacer size={30} />

@@ -87,7 +87,7 @@ const Growth: React.FC<Props> = ({ navigation }) => {
       );
       if (response.data.status && response.data.children.length > 0) {
         setChildren(response.data.children);
-        // Set first child as default in the store
+         
         dispatch(setSelectedChild(response.data.children[0]));
       } else {
         const defaultChildren = [

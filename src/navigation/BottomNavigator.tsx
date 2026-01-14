@@ -40,7 +40,7 @@ const BottomNavigator = () => {
         },
         tabBarIcon: ({ focused, color, size }) => {
           let icon;
-          if (route.name === 'Child') {
+          if (route.name === 'Child') { 
             icon = (
               <MaterialIcons
                 name= 'child-care'

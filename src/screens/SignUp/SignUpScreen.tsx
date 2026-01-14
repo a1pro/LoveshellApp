@@ -47,24 +47,24 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
      if (!inputData.username.trim()) {
        Toast.show({
          type: 'error',
-         text1: 'Validation',
-         text2: 'Username is required',
+         text1: t("vallidationError"),
+         text2: t("validUsername"),
        });
        return false;
      }
      if (!inputData.email.trim()) {
        Toast.show({
          type: 'error',
-         text1: 'Validation',
-         text2: 'Email is required',
+         text1: t("vallidationError"),
+         text2: t("validEmail"),
        });
        return false;
      }
      if (!/\S+@\S+\.\S+/.test(inputData.email)) {
        Toast.show({
          type: 'error',
-         text1: 'Validation',
-         text2: 'Enter a valid email address',
+         text1: t("vallidationError"),
+         text2: t("validEmail22"),
        });
        return false;
      }
@@ -73,8 +73,8 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
      if (!inputData.password.trim()) {
        Toast.show({
          type: 'error',
-         text1: 'Validation',
-         text2: 'Password is required',
+         text1: t("vallidationError"),
+         text2: t("passwordRequired"),
        });
        return false;
      }
@@ -118,16 +118,16 @@ const handleSignup = async () => {
       if (res.data.status === "success") {
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: res.data.message || 'Registration Successful',
+          text1: t("successTitle"),
+          text2: res.data.message || t("registerSuccess"),
         });
                 
         navigation.navigate('ChildRegister');
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: res.data.message || 'Registration Failed',
+          text1: t("errorTitle"),
+          text2: res.data.message || t("registerFail"),
         });
       }
     } catch (error: any) {
@@ -138,14 +138,14 @@ const handleSignup = async () => {
       if (error.response) {
         errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
       } else if (error.request) {
-        errorMessage = 'Network error - Please check your connection';
+        errorMessage = t("netError");
       } else {
         errorMessage = error.message || 'An unexpected error occurred';
       }
       
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: t("errorTitle"),
         text2: errorMessage,
       });
     } finally {
@@ -175,13 +175,13 @@ const handleSignup = async () => {
             <View style={{ gap: 10, marginTop: verticalScale(40) }}>
               <CustomInput
                 label={t('username')}
-                placeholder="Username"
+                placeholder={t('username')}
                 onChangeText={value => handleInputChange('username', value)}
                 value={inputData.username}
               />
               <CustomInput
                 keyboardType="email-address"
-                placeholder="Email"
+                placeholder={t('email')}
                 onChangeText={value => handleInputChange('email', value)}
                 value={inputData.email}
                 label={t('email')}
@@ -204,7 +204,7 @@ const handleSignup = async () => {
                   fontWeight={'500'}
                   fontFamily="light"
                 >
-                  {date ? date.toLocaleDateString() : 'Date of Birth'}
+                  {date ? date.toLocaleDateString() : t("dob")}
                 </CustomText>
                 <VectorIcon
                   type="MaterialIcons"
@@ -271,7 +271,7 @@ const handleSignup = async () => {
 
               <CustomInput
                 type="password"
-                placeholder="Password"
+                placeholder={t('password')}
                 onChangeText={value => handleInputChange('password', value)}
                 value={inputData.password}
                 label={t('password')}

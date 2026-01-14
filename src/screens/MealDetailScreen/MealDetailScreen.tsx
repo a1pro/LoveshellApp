@@ -300,7 +300,6 @@ const handleSave = async () => {
               textAlignVertical="top"
             />
 
-            {/* How Much & Unit labels in one row */}
             <View style={styles.labelRow}>
               <CustomText style={styles.smallLabel}>{t("howmuch")}</CustomText>
               <CustomText style={styles.smallLabel}>{t('unit')}</CustomText>

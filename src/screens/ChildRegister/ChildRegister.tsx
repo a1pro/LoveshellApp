@@ -88,7 +88,8 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
       if (Platform.OS === 'android') {
         Toast.show({
           type: 'error',
-          text1: 'You can add only 6 child',
+          text1:t("errorTitle"),
+          text2: t("childAdd"),
         });
       } else {
         Alert.alert('You can add only 6 child');
@@ -125,13 +126,13 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
       );
       if (response.data.status) {
         const names = response.data.data.map((item: any) => item.name);
-        // Add "None" option at the beginning of the list
         setAllergiesList(['None', ...names]);
       }
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to load allergies',
+        text1:t("errorTitle"),
+        text2: t('failload'),
       });
     } finally {
       setLoading(false);
@@ -150,8 +151,7 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
       formData.append('name[]', child.name);
       formData.append('dob[]', child.date.toISOString().split('T')[0]);
       formData.append('sex[]', child.sex);
-      
-      // Handle allergies - send empty string if "None" is selected
+    
       if (child.allergies === 'None') {
         formData.append('allergies[]', '');
       } else {
@@ -179,7 +179,8 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
         console.log("data", response.data);
         Toast.show({
           type: 'success',
-          text1: response.data.message,
+          text1:t("successTitle"),
+          text2: response.data.message,
         });
         navigation.navigate('HomeScreen');
       }
@@ -187,7 +188,8 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
       console.log(error.response?.data);
       Toast.show({
         type: 'error',
-        text1: 'Registration failed, please try again.',
+        text1:t("errorTitle"),
+        text2: t("registerFail"),
       });
     } finally {
       setLoading(false);
@@ -264,7 +266,7 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
                       activeOpacity={0.5}
                     >
                       <CustomText color={COLORS.black} type="small">
-                        {child.sex || 'Select Gender'}
+                        {child.sex ||t("genderselect")}
                       </CustomText>
                     </TouchableOpacity>
                   </View>
@@ -316,7 +318,7 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
                   >
                     {child.date
                       ? child.date.toLocaleDateString()
-                      : 'Date of Birth'}
+                      : t('dob')}
                   </CustomText>
                   <VectorIcon
                     type="MaterialIcons"
@@ -476,7 +478,7 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
                   type="subHeading"
                   style={{ textAlign: 'center', marginBottom: 10 }}
                 >
-                  Select Allergy
+                  {t("selectAllergy")}
                 </CustomText>
 
                 {loading ? (
@@ -522,7 +524,7 @@ const ChildRegister: React.FC<Props> = ({ navigation }) => {
                   }}
                   onPress={() => setShowAllergyModal(false)}
                 >
-                  <CustomText color={COLORS.red}>Cancel</CustomText>
+                  <CustomText color={COLORS.red}>{t("cancel")}</CustomText>
                 </TouchableOpacity>
               </View>
             </View>

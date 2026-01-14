@@ -68,7 +68,7 @@ const AddmealScreen: React.FC<Props> = ({ navigation, route }) => {
         return;
       }
       if (!childId) {
-        Toast.show({ type: "error", text1: "Error", text2: "Child not selected" });
+        Toast.show({ type: "error", text1: t("errorTitle"), text2: t("childNotSelected") });
         return;
       }
 
@@ -94,11 +94,11 @@ const AddmealScreen: React.FC<Props> = ({ navigation, route }) => {
 
       } else {
         setMeals([]);
-        Toast.show({ type: "info", text1: "No Data", text2: res.data.message || "No meal data available" });
+        Toast.show({ type: "info", text1: t('nodata'), text2: res.data.message || t("nomealdata") });
       }
     } catch (error) {
       setLoading(false);
-      Toast.show({ type: "error", text1: "Error", text2: "Error fetching meal data" });
+      Toast.show({ type: "error", text1: t("errorTitle"), text2: t("errorFetching") });
       console.error("Error fetching meal data:", error);
       setMeals([]);
     }
@@ -110,8 +110,8 @@ const AddmealScreen: React.FC<Props> = ({ navigation, route }) => {
       if (!token) {
          Toast.show({
                 type: "error",
-                text1: t("errorTitle"), // "Error"
-                text2: t("userTokenMissing"), // "User token is missing"
+                text1: t("errorTitle"), 
+                text2: t("userTokenMissing"), 
               });
         return;
       }
@@ -171,23 +171,23 @@ const AddmealScreen: React.FC<Props> = ({ navigation, route }) => {
 const handleDelete = (id: number) => {
   try {
     Alert.alert(
-      t("confirmDeleteTitle"), // e.g. "Confirm Delete"
-      t("confirmDeleteMessage"), // e.g. "Are you sure you want to delete this meal?"
+      t("confirmDeleteTitle"), 
+      t("confirmDeleteMessage"),  
       [
         {
-          text: t("cancel"), // "Cancel"
+          text: t("cancel"),  
           style: "cancel",
         },
         {
-          text: t("delete"), // "Delete"
+          text: t("delete"),  
           style: "destructive",
           onPress: async () => {
             const token = await AsyncStorage.getItem("Usertoken");
             if (!token) {
               Toast.show({
                 type: "error",
-                text1: t("errorTitle"), // "Error"
-                text2: t("userTokenMissing"), // "User token is missing"
+                text1: t("errorTitle"), 
+                text2: t("userTokenMissing"),  
               });
               return;
             }

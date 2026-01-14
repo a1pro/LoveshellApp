@@ -43,7 +43,6 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
   const [isAdminDatePickerOpen, setIsAdminDatePickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Initialize administered date if exists
   useEffect(() => {
     if (vaccineData?.administered_date) {
       setAdministeredDate(new Date(vaccineData.administered_date));
@@ -63,34 +62,38 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const showToast = (
-    type: "success" | "error",
-    text1: string,
-    text2?: string
-  ) => {
-    Toast.show({
-      type,
-      text1,
-      text2,
-      position: "top",
-    });
-  };
+ 
 
   const handleSave = async () => {
-    // Validations
+  
     if (!vaccineData?.id) {
-      showToast("error", "Error", "Vaccination ID is required");
+      Toast.show({
+        type:"error",
+        text1:t("vallidationError"),
+        text2:t("vaccinationRequired")
+      })
+       
       return;
     }
 
     if (!administeredDate) {
-      showToast("error", "Validation", "Please select administered date");
+         Toast.show({
+        type:"error",
+        text1:t("vallidationError"),
+        text2:t("datevalid")
+      })
+   
       return;
     }
 
     const token = await AsyncStorage.getItem("Usertoken");
     if (!token) {
-      showToast("error", "Error", "User token not found");
+         Toast.show({
+        type:"error",
+        text1:t("errorTitle"),
+        text2:t("userTokenMissing")
+      })
+       
       return;
     }
 
@@ -116,25 +119,34 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
       );
 
       if (res?.data?.success) {
-        showToast("success", "Success", res.data.message || "Vaccination updated successfully");
+        Toast.show({
+          type:"success",
+          text1:t("successTitle"),
+          text2: res.data.message ||t("vaccinationSuccess")
+
+        })
+         
         
        
         setTimeout(() => {
           navigation.goBack();
         }, 1500);
       } else {
-        showToast(
-          "error",
-          "Error",
-          res?.data?.message || "Something went wrong"
-        );
+     Toast.show({
+         type: "error",
+         text1: t("errorTitle"),
+         text2: res?.data?.message || t("wrong")
+       } );
       }
     } catch (error: any) {
       const msg =
         error?.response?.data?.message ||
         error?.message ||
         "Failed to update vaccination";
-      showToast("error", "Error", msg);
+      Toast.show({
+       type: "error",
+       text1: "Error",
+       text2: msg});
       console.log("error updtae",msg)
     } finally {
       setLoading(false);
@@ -144,8 +156,7 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
   return (
     <GradientBackground>
       <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
+            <View style={styles.header}>
           <TouchableOpacity
             style={styles.backIcon}
             onPress={() => navigation.goBack()}
@@ -181,14 +192,12 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
 
         <Spacer style={{ height: 16 }} />
 
-        {/* Form */}
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.formContainer}
         >
-          {/* Read-only Vaccine Name - CustomText */}
           <View style={styles.infoField}>
-            <CustomText style={styles.fieldLabel}>Vaccine Name</CustomText>
+            <CustomText style={styles.fieldLabel}>{t("vaccineName")}</CustomText>
             <CustomText style={styles.fieldValue}>
               {vaccineData?.vaccine_name || 'N/A'}
             </CustomText>
@@ -196,9 +205,8 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
 
           <Spacer style={{ height: 16 }} />
 
-          {/* Read-only Dose Number - CustomText */}
           <View style={styles.infoField}>
-            <CustomText style={styles.fieldLabel}>Dose Number</CustomText>
+            <CustomText style={styles.fieldLabel}>{t("doseNumber")}</CustomText>
             <CustomText style={styles.fieldValue}>
               {vaccineData?.dose_number ? `Dose ${vaccineData.dose_number}` : 'N/A'}
             </CustomText>
@@ -206,9 +214,8 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
 
           <Spacer style={{ height: 16 }} />
 
-          {/* Read-only Due Date - CustomText */}
           <View style={styles.infoField}>
-            <CustomText style={styles.fieldLabel}>Due Date</CustomText>
+            <CustomText style={styles.fieldLabel}>{t("dueDate")}</CustomText>
             <CustomText style={styles.fieldValue}>
               {vaccineData?.due_date 
                 ? new Date(vaccineData.due_date).toLocaleDateString() 
@@ -219,10 +226,9 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
 
           <Spacer style={{ height: 24 }} />
 
-          {/* Editable Administered Date */}
           <CustomInput
-            label={t("Administered Date")}
-            placeholder={t("Select administered date")}
+            label={t("adminDate")}
+            placeholder={t("selectadminDate")}
             type="date"
             value={formatDateForDisplay(administeredDate)}
             onChangeText={() => {}}
@@ -233,7 +239,7 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
           <Spacer style={{ height: 30 }} />
 
           <CustomButton
-            title={loading ? "Updating..." : "Update Vaccination"}
+            title={loading ? t("updating") : t("updateVaccination")}
             disabled={loading || !administeredDate}
             onPress={handleSave}
           />
@@ -241,7 +247,6 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
           <Spacer style={{ height: 20 }} />
         </ScrollView>
 
-        {/* Administered Date Picker */}
         <DatePicker
           modal
           open={isAdminDatePickerOpen}
@@ -252,7 +257,7 @@ const VaccinationUpdate: React.FC<Props> = ({ route, navigation }) => {
             setAdministeredDate(date);
           }}
           onCancel={() => setIsAdminDatePickerOpen(false)}
-          maximumDate={new Date()} // Can't select future date for administration
+          maximumDate={new Date()} 
         />
       </View>
     </GradientBackground>

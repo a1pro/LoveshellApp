@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
   },
   childTextActive: {
-    color: COLORS.White,
+    color: COLORS.black,
     fontFamily: "Poppins-SemiBold",
   },
    loadingContainer: {

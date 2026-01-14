@@ -51,9 +51,7 @@ type HeightAiScreenParams = {
 
 const HeightAiScreen: React.FC<Props> = ({ navigation, route }) => {
   const selectedChild = useSelector((state: RootState) => state.child.selectedChild);
-  const { t } = useTranslation();
-  
-  // Get selected growth record from route params
+  const { t } = useTranslation(); 
   const selectedGrowthRecord = route.params?.selectedGrowthRecord as unknown as GrowthRecord;
 
   const aiAnalysis = selectedGrowthRecord?.ai_analysis || {};
@@ -106,8 +104,7 @@ const HeightAiScreen: React.FC<Props> = ({ navigation, route }) => {
        
         <View style={styles.analysisCard}>
           <CustomText style={styles.analysisHeading} type="heading">{t("ai_analysis")}</CustomText>
-          
-          {/* Key Metrics */}
+           
           <View style={styles.cardStatsRow}>
             <View style={styles.metricItem}>
               <CustomText style={styles.metricLabel}>{t("growthtrend")}:</CustomText>
@@ -118,12 +115,10 @@ const HeightAiScreen: React.FC<Props> = ({ navigation, route }) => {
               <CustomText style={styles.metricValue}>{aiAnalysis.growth_score || 'N/A'}</CustomText>
             </View>
           </View>
-
-          {/* Overall Assessment */}
+ 
           <CustomText style={styles.analysisLabel}>{t("overall")}:</CustomText>
           <CustomText style={styles.analysisValue}>{aiAnalysis.overall_assessment}</CustomText>
-
-          {/* Detailed Analysis */}
+ 
           <CustomText style={styles.analysisLabel}>{t('heightAnalyis')}:</CustomText>
           <CustomText style={styles.analysisValue}>{aiAnalysis.height_analysis}</CustomText>
 
@@ -132,8 +127,7 @@ const HeightAiScreen: React.FC<Props> = ({ navigation, route }) => {
 
           <CustomText style={styles.analysisLabel}>{t("bmiAssesment")}:</CustomText>
           <CustomText style={styles.analysisValue}>{aiAnalysis.bmi_assessment}</CustomText>
-
-          {/* Recommendations */}
+ 
           <CustomText style={styles.analysisLabel}>{t("recommendations")}:</CustomText>
           <View style={styles.listContainer}>
             {aiAnalysis.recommendations?.map((recommendation: string, idx: number) => (
@@ -142,8 +136,7 @@ const HeightAiScreen: React.FC<Props> = ({ navigation, route }) => {
               </CustomText>
             ))}
           </View>
-
-          {/* When to Consult */}
+ 
           <CustomText style={styles.analysisLabel}>{t('whentoconsult')}:</CustomText>
           <View style={styles.listContainer}>
             {aiAnalysis.when_to_consult?.map((consult: string, idx: number) => (
@@ -152,8 +145,7 @@ const HeightAiScreen: React.FC<Props> = ({ navigation, route }) => {
               </CustomText>
             ))}
           </View>
-
-          {/* Positive Observations */}
+ 
           <CustomText style={styles.analysisLabel}>{t('PositiveObservations')}:</CustomText>
           <View style={styles.listContainer}>
             {aiAnalysis.positive_observations?.map((observation: string, idx: number) => (

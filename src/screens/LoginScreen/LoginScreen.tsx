@@ -61,14 +61,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     setRemTick(!remTick);
   };
   const validateForm = () => {
-    if (!inputData.username.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: 'Validation',
-        text2: 'Username is required',
-      });
-      return false;
-    }
+    
     if (!inputData.email.trim()) {
       Toast.show({
         type: 'error',
@@ -159,12 +152,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             </CustomText>
 
             <View style={{ gap: 10, marginTop: verticalScale(40) }}>
-              <CustomInput
-                label={t('username')}
-                placeholder="Username"
-                onChangeText={value => handleInputChange('username', value)}
-                value={inputData.username}
-              />
+              
               <CustomInput
                 keyboardType="email-address"
                 placeholder="Email"

@@ -1,0 +1,273 @@
+import { StyleSheet } from "react-native";
+import COLORS from "../../utils/Colors";
+import { horizontalScale, verticalScale } from "../../utils/Metrics";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: horizontalScale(20),
+    paddingTop: verticalScale(20),
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: verticalScale(8),
+  },
+  backIcon: {
+    width: horizontalScale(40),
+    height: verticalScale(40),
+    borderRadius: 20,
+    backgroundColor: COLORS.appLinear1,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  headerTitle: {
+    fontSize: verticalScale(20),
+    color: COLORS.black,
+    fontFamily: "Poppins-SemiBold",
+    flex: 1,
+    textAlign: "center",
+  },
+  formContainer: {
+    paddingBottom: verticalScale(50),
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.White,
+    borderRadius: 12,
+    paddingHorizontal: horizontalScale(16),
+    height: verticalScale(48),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  searchIcon: {
+    marginRight: horizontalScale(12),
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: verticalScale(16),
+    color: COLORS.black,
+    fontFamily: "Poppins-Regular",
+  },
+  sectionTitle: {
+    fontSize: verticalScale(18),
+    color: COLORS.black,
+    marginBottom: verticalScale(16),
+  },
+  topicGrid: {
+    justifyContent: "space-between",
+  },
+  topicCard: {
+    padding: horizontalScale(16),
+    borderRadius: 16,
+    marginBottom: verticalScale(12),
+    flex: 1,
+    marginHorizontal: horizontalScale(4),
+    borderWidth: 2,
+    borderColor: COLORS.grey,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  selectedTopicCard: {
+    borderWidth: 3,
+    shadowOpacity: 0.25,
+    transform: [{ scale: 1.02 }],
+  },
+  topicCardTitle: {
+    fontSize: verticalScale(16),
+    color: COLORS.black,
+    fontFamily: "Poppins-SemiBold",
+    textAlign: "center",
+  },
+  descriptionCard: {
+    backgroundColor: COLORS.White,
+    padding: horizontalScale(20),
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  descriptionText: {
+    fontSize: verticalScale(16),
+    color: COLORS.black,
+    fontFamily: "Poppins-Regular",
+    lineHeight: verticalScale(24),
+  },
+  commentsSection: {
+    backgroundColor: COLORS.White,
+    borderRadius: 16,
+    padding: horizontalScale(20),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  commentsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: verticalScale(16),
+  },
+  commentsTitle: {
+    color: COLORS.black,
+  },
+  commentsCountText: {
+    color: COLORS.grey,
+    fontFamily: "Poppins-Medium",
+  },
+  commentContainer: {
+    paddingVertical: verticalScale(12),
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightGrey,
+    marginBottom: verticalScale(12),
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: verticalScale(8),
+  },
+  userAvatar: {
+    width: verticalScale(40),
+    height: verticalScale(40),
+    borderRadius: 20,
+    backgroundColor: COLORS.lightblue2,
+    marginRight: horizontalScale(12),
+  },
+  userDetails: {
+    flex: 1,
+  },
+  userName: {
+    color: COLORS.black,
+    marginBottom: verticalScale(2),
+  },
+  commentTime: {
+    color: COLORS.grey,
+  },
+  commentText: {
+    color: COLORS.black,
+    fontFamily: "Poppins-Regular",
+    lineHeight: verticalScale(22),
+    marginBottom: verticalScale(12),
+  },
+  replyButton: {
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: horizontalScale(12),
+  },
+  replyText: {
+    color: COLORS.blue,
+    fontFamily: "Poppins-Medium",
+    fontSize: verticalScale(14),
+  },
+  loadingText: {
+    fontSize: verticalScale(16),
+    color: COLORS.grey,
+    fontFamily: "Poppins-Regular",
+  },
+  // Add these new styles to your existing styles object:
+
+addCommentContainer: {
+  flexDirection: "row",
+  alignItems: "flex-end",
+  paddingTop: verticalScale(16),
+  borderTopWidth: 1,
+  borderTopColor: COLORS.lightGrey,
+  paddingBottom: verticalScale(8),
+},
+addCommentInput: {
+  flex: 1,
+  fontSize: verticalScale(16),
+  color: COLORS.black,
+  fontFamily: "Poppins-Regular",
+  paddingVertical: verticalScale(12),
+  paddingHorizontal: horizontalScale(16),
+  backgroundColor: COLORS.White,
+  borderRadius: 20,
+  maxHeight: verticalScale(100),
+  textAlignVertical: 'top',
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 8,
+  elevation: 3,
+},
+addCommentButton: {
+  marginLeft: horizontalScale(12),
+  padding: verticalScale(12),
+},
+addCommentButtonDisabled: {
+  opacity: 0.5,
+},
+replyInputContainer: {
+  flexDirection: "row",
+  alignItems: "flex-end",
+  paddingHorizontal: horizontalScale(52),
+  paddingVertical: verticalScale(8),
+  backgroundColor: COLORS.lightGrey,
+  borderRadius: 12,
+  marginTop: verticalScale(8),
+},
+replyInput: {
+  flex: 1,
+  fontSize: verticalScale(14),
+  color: COLORS.black,
+  fontFamily: "Poppins-Regular",
+  paddingVertical: verticalScale(8),
+  paddingHorizontal: horizontalScale(12),
+  backgroundColor: COLORS.White,
+  borderRadius: 12,
+  maxHeight: verticalScale(80),
+  textAlignVertical: 'top',
+},
+addReplyButton: {
+  padding: verticalScale(10),
+},
+addReplyButtonDisabled: {
+  opacity: 0.5,
+},
+repliesContainer: {
+  marginLeft: horizontalScale(52),
+  marginTop: verticalScale(8),
+  paddingVertical: verticalScale(8),
+},
+replyItem: {
+  paddingVertical: verticalScale(4),
+},
+replyTime: {
+  color: COLORS.grey,
+  fontSize: verticalScale(12),
+  fontFamily: "Poppins-Regular",
+},
+loadingComments: {
+  paddingVertical: verticalScale(20),
+  alignItems: "center",
+},
+noComments: {
+  textAlign: "center",
+  color: COLORS.grey,
+  fontStyle: "italic",
+  paddingVertical: verticalScale(20),
+  fontFamily: "Poppins-Regular",
+},
+});
+
+export default styles;

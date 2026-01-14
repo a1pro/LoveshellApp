@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, ScrollView, ActivityIndicator,Image } from 'react-native';
 import GradientBackground from '../../components/GradientBackground';
 import { RootStackParamList } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -17,6 +17,10 @@ import ENDPOINTS, { API_URL } from '../../APIService/endPoints';
 import CustomButton from '../../components/CustomButton';
 import { useFocusEffect } from '@react-navigation/native';
 import Spacer from '../../components/Spacer';
+import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
+ 
+import IMAGES from '../../assets/images';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'VaccinationCalendar'>;
 
@@ -28,7 +32,7 @@ interface VaccineData {
   user_id: number;
   vaccine_name: string;
   dose_number: number;
-  status: 'completed' | 'scheduled'; // Updated to include 'scheduled'
+  status: 'completed' | 'scheduled';  
   due_date: string;
   administered_date: string | null;
 }
@@ -56,7 +60,7 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
   const selectedChild = useSelector(
     (state: RootState) => state.child.selectedChild,
   );
-
+ const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<string>(TODAY_STRING);
   const [vaccineData, setVaccineData] = useState<Record<string, VaccinationRecord[]>>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -77,7 +81,11 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
 
       const token = await AsyncStorage.getItem('Usertoken');
       if (!token) {
-        setError('Authentication required. Please login again.');
+          Toast.show({
+               type:"error",
+               text1:t("errorTitle"),
+               text2:t("userTokenMissing")
+             }) 
         setLoading(false);
         return;
       }
@@ -101,15 +109,14 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
           const dateKey = vaccine.administered_date
             ? vaccine.administered_date.split('T')[0]
             : vaccine.due_date.split('T')[0];
-
-          // Map "scheduled" status to "pending" for UI display
+ 
           const uiStatus: DoseStatus = vaccine.status === 'scheduled' ? 'pending' : vaccine.status;
 
           const record: VaccinationRecord = {
             id: vaccine.id,
             vaccine_name: vaccine.vaccine_name,
             dose_number: vaccine.dose_number,
-            status: uiStatus, // Use the mapped status
+            status: uiStatus,  
             due_date: vaccine.due_date,
             administered_date: vaccine.administered_date,
             ageLabel: `Dose ${vaccine.dose_number}`,
@@ -168,7 +175,7 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
     switch (status) {
       case 'completed': return '#22c55e';
       case 'pending':
-      case 'scheduled': // Handle scheduled status
+      case 'scheduled':  
       case 'upcoming': return '#f59e0b';
       case 'overdue': return '#ef4444';
       default: return '#f59e0b';
@@ -250,7 +257,7 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
         textColor = '#dc2626'; 
         label = 'Overdue'; 
         break;
-      case 'scheduled': // Handle scheduled status
+      case 'scheduled':  
       case 'pending': 
         iconName = 'alarm'; 
         iconColor = '#f59e0b'; 
@@ -298,47 +305,54 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
     });
   };
 
-  const renderVaccineCard = (record: VaccinationRecord, index: number) => {
-    // Show update button for pending/scheduled status
-    const shouldShowUpdateButton = record.status === 'pending' || record.status === 'scheduled' || record.status === 'upcoming';
+ const renderVaccineCard = (record: VaccinationRecord, index: number) => {
+  const shouldShowUpdateButton = record.status === 'pending' || record.status === 'scheduled' || record.status === 'upcoming';
 
-    return (
-      <View key={index} style={styles.vaccineCard}>
-        <View style={styles.vaccineHeader}>
-          <View style={styles.vaccineInfo}>
-            <CustomText style={styles.vaccineTitle}>
-              {record.vaccine_name}
-            </CustomText>
-            <CustomText style={styles.vaccineSubTitle}>
-              {record.ageLabel || `Dose ${record.dose_number}`}
-              {record.administered_date && ` • Administered on ${formatDate(record.administered_date)}`}
-              {!record.administered_date && record.due_date && ` • Due on ${formatDate(record.due_date)}`}
-            </CustomText>
-          </View>
+  return (
+    <View key={index} style={styles.vaccineCard}>
+      
+      <View style={styles.cardTopRow}>
+       
+   
+      
+        <View style={styles.vaccineTextContainer}>
+          <View style={styles.vaccineHeader}>
+            <View style={styles.vaccineInfo}>
+              <CustomText style={styles.vaccineTitle}>
+                {record.vaccine_name}
+              </CustomText>
+              <CustomText style={styles.vaccineSubTitle}>
+                {record.ageLabel || `Dose ${record.dose_number}`}
+                {record.administered_date && ` • Administered on ${formatDate(record.administered_date)}`}
+                {!record.administered_date && record.due_date && ` • Due on ${formatDate(record.due_date)}`}
+              </CustomText>
+            </View>
             {renderStatusRow(record.status)}
-
-            <Spacer style={{height:10}}/>
+          </View>
+          <Spacer style={{height:10}}/>
           {shouldShowUpdateButton && (
-             <CustomButton 
-                  title="Update Vaccination" 
-                  onPress={() => handleUpdateVaccine(record)}
-                  // containerStyle={styles.addButton}
-                />
+            <CustomButton 
+              title={t("updateVaccination")} 
+              onPress={() => handleUpdateVaccine(record)}
+            />
           )}
         </View>
-
-     
+             <Image
+          source={IMAGES.vacinechild}  
+          style={styles.vaccineImage}
+          resizeMode="contain"
+        />
       </View>
-    );
-  };
-
-  // Render calendar function
+    </View>
+  );
+};
+ 
   const renderCalendar = () => {
     if (loading) {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.appLinear1} />
-          <CustomText style={styles.loadingText}>Loading vaccine data...</CustomText>
+          <CustomText style={styles.loadingText}>{t("vaccineLoading")}</CustomText>
         </View>
       );
     }
@@ -357,7 +371,7 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
             style={styles.retryButton}
             onPress={fetchVaccineData}
           >
-            <CustomText style={styles.retryButtonText}>Retry</CustomText>
+            <CustomText style={styles.retryButtonText}>{t("retry")}</CustomText>
           </TouchableOpacity>
         </View>
       );
@@ -411,7 +425,7 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <CustomText style={styles.pageTitle}>
-          Stay on Track with Your Child's Vaccinations
+         {t("stayonTrack")}
         </CustomText>
 
         {renderCalendar()}
@@ -426,12 +440,12 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
               selectedRecords.map((record, index) => renderVaccineCard(record, index))
             ) : (
               <>
-                <CustomText style={styles.vaccineTitle}>No vaccinations scheduled</CustomText>
-                <CustomText style={styles.vaccineSubTitle}>No vaccine appointments for this date</CustomText>
+                <CustomText style={styles.vaccineTitle}>{t("noVaccination")}</CustomText>
+                <CustomText style={styles.vaccineSubTitle}>{t("noVaccineAppointment")}</CustomText>
                 <CustomButton 
-                  title="Add Vaccination" 
+                  title={t("addVaccination")}
                   onPress={() => navigation.navigate("VaccinationForm" as any)} 
-                  // containerStyle={styles.addButton}
+                  
                 />
               </>
             )}
@@ -443,15 +457,15 @@ const VaccinationCalendar: React.FC<Props> = ({ navigation }) => {
           <View style={styles.legendContainer}>
             <View style={styles.legendItem}>
               <Icon name="injection-syringe" size={14} color="#22c55e" />
-              <CustomText style={styles.legendText}>Completed</CustomText>
+              <CustomText style={styles.legendText}>{t("completed")}</CustomText>
             </View>
             <View style={styles.legendItem}>
               <Icon name="injection-syringe" size={14} color="#f59e0b" />
-              <CustomText style={styles.legendText}>Pending/Scheduled</CustomText>
+              <CustomText style={styles.legendText}>{t("pending")}</CustomText>
             </View>
             <View style={styles.legendItem}>
               <Icon name="injection-syringe" size={14} color="#ef4444" />
-              <CustomText style={styles.legendText}>Overdue</CustomText>
+              <CustomText style={styles.legendText}>{t("overdue")}</CustomText>
             </View>
           </View>
         )}

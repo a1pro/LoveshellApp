@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import ENDPOINTS, { API_URL } from '../../APIService/endPoints';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<BottomTabParamList, 'UserProfile'>;
 
@@ -24,7 +25,7 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
     avatar: IMAGES.profile,
   };
   const [userData, setUserData] = useState<{ username?: string; email?: string }>({});
-
+   const { t } = useTranslation();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -49,11 +50,11 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
       console.log("Logout token:", token);
       if (!token) {
         console.log('No token found');
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'No token found, please login again.',
-        });
+       Toast.show({
+                type: 'error',
+                text1: t("errorTitle"),
+                text2: t("userTokenMissing")
+              });
         setLoading(false);
         return;
       }
@@ -68,15 +69,15 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
         await AsyncStorage.removeItem('userData');
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Logged out successfully.',
+          text1: t("successTitle"),
+          text2: t("logout"),
         });
         navigation.navigate('Login');
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Logout Failed',
-          text2: res.data.message || 'Logout failed. Try again.',
+          text1: t("logouterror"),
+          text2: res.data.message || t("logouterror"),
         });
       }
     }  catch (error) {
@@ -90,8 +91,8 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
   }
   Toast.show({
     type: 'error',
-    text1: 'Logout Failed',
-    text2: 'Failed to logout. Try again.',
+    text1: t("logouterror"),
+    text2:t("logouterror"),
   });
     } finally {
       setLoading(false);
@@ -118,7 +119,7 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
             color={COLORS.black}
             style={{ marginBottom: verticalScale(10) }}
           >
-            Your Profile
+            {t("yourProfile")}
           </CustomText>
           <View style={styles.avatarWrapper}>
             <Image source={user.avatar} style={styles.avatar} />
@@ -139,7 +140,7 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
         <View style={styles.editProfileBtnWrap}>
           <TouchableOpacity style={styles.editProfileBtn}>
             <CustomText type="small" color={COLORS.White} fontWeight="bold">
-              Edit Profile
+              {t("editProfile")}
             </CustomText>
           </TouchableOpacity>
         </View>
@@ -153,7 +154,7 @@ const UserProfile: React.FC<Props> = ({ navigation }) => {
           
                   <ActivityIndicator color={COLORS.red} size={18} style={{ marginLeft: 8 }} />
                 </>
-              ) : 'Logout'}
+              ) :t("logoutbtn")}
             </CustomText>
           </TouchableOpacity>
         </View>

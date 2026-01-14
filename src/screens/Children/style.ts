@@ -29,6 +29,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: verticalScale(5),
   },
+  // Tabs
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: horizontalScale(20),
+    paddingVertical: verticalScale(10),
+    backgroundColor: COLORS.appLinear1,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: verticalScale(8),
+    alignItems: 'center',
+    borderRadius: 8,
+    marginHorizontal: horizontalScale(3),
+    backgroundColor: COLORS.inputBackground,
+  },
+  activeTabButton: {
+    backgroundColor: COLORS.blue,
+  },
   scrollView: {
     flex: 1,
   },
@@ -36,6 +54,10 @@ const styles = StyleSheet.create({
     padding: horizontalScale(20),
     paddingBottom: verticalScale(30),
   },
+  addTabScrollContent: {
+    padding: 0,
+  },
+  // Child List Tab Styles
   childCard: {
     backgroundColor: COLORS.White,
     borderRadius: 12,
@@ -50,7 +72,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     borderWidth: 1,
-    borderColor: COLORS.inputBorder,
+    borderColor: COLORS.White,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -58,8 +80,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: verticalScale(15),
     paddingBottom: verticalScale(10),
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.inputBorder,
   },
   editButton: {
     padding: horizontalScale(5),
@@ -75,9 +95,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     padding: horizontalScale(5),
   },
-  dataSection: {
-    // Space for data fields
-  },
+  dataSection: {},
   fieldContainer: {
     marginBottom: verticalScale(12),
   },
@@ -144,6 +162,145 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // Add Child Tab Styles
+  addChildScrollView: {
+    flex: 1,
+  },
+  addChildScrollContent: {
+    paddingHorizontal: horizontalScale(15),
+    paddingBottom: verticalScale(30),
+  },
+  addChildCard: {
+    backgroundColor: COLORS.backView,
+    padding: 20,
+    borderRadius: 15,
+    marginTop: verticalScale(25),
+    justifyContent: 'center',
+    marginHorizontal: horizontalScale(5),
+  },
+  deleteview: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: verticalScale(15),
+  },
+  childNumberText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  addChildForm: {
+    gap: 10,
+  },
+  addChildInput: {
+    marginBottom: 0,
+  },
+  genderAllergyRow: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+  genderContainer: {
+    flex: 1,
+  },
+  allergyContainer: {
+    flex: 1,
+  },
+  selectionButton: {
+    borderWidth: 1,
+    borderColor: COLORS.inputBorder,
+    borderRadius: 16,
+    padding: 16,
+    backgroundColor: COLORS.White,
+    marginTop: verticalScale(4),
+  },
+  dateButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 15,
+    paddingHorizontal: horizontalScale(15),
+    borderWidth: 1,
+    padding: 18,
+    backgroundColor: COLORS.White,
+    borderColor: COLORS.inputBorder,
+    marginTop: verticalScale(4),
+  },
+  weightHeightRow: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+  weightContainer: {
+    flex: 1.5,
+  },
+  heightContainer: {
+    flex: 1.5,
+  },
+  unitContainer: {
+    flex: 1,
+  },
+  smallInput: {
+    marginBottom: 0,
+  },
+  unitInput: {
+    marginBottom: 0,
+    width:65
+    // backgroundColor: COLORS.inputBackground,
+  },
+  addMoreButton: {
+    marginTop: verticalScale(20),
+    paddingVertical: verticalScale(15),
+    backgroundColor: COLORS.inputBackground,
+    borderRadius: 18,
+    borderWidth: 1,
+    width:"60%",
+    alignSelf:"center",
+    borderColor: COLORS.inputBorder,
+  },
+  registerButton: {
+    backgroundColor: COLORS.blue,
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: horizontalScale(20),
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+     width:"60%",
+    alignSelf:"center",
+    marginTop: verticalScale(20),
+    shadowColor: COLORS.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  // Allergy Modal Styles
+  allergyModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  allergyModalContent: {
+    backgroundColor: COLORS.White,
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxHeight: '70%',
+  },
+  allergyItem: {
+    padding: 14,
+    borderBottomWidth: 1,
+    borderColor: COLORS.inputBorder,
+  },
+  cancelAllergyButton: {
+    marginTop: 10,
+    alignSelf: 'center',
+    padding: 10,
   },
 });
 

@@ -89,6 +89,19 @@ export const styles = StyleSheet.create({
     color: COLORS.black,
     fontFamily: 'Poppins-SemiBold',
   },
+   cardTopRow: {
+    flexDirection: 'row',  
+    alignItems: 'flex-start',  
+  },
+  vaccineImage: {
+    width: 120,  
+    height: 120,
+    resizeMode:"contain"
+    
+  },
+  vaccineTextContainer: {
+    flex: 1,  
+  },
   vaccineIconContainer: {
     position: 'absolute',
     bottom: verticalScale(2),
