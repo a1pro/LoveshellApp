@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { 
-  View, 
-  TouchableOpacity, 
-  Image, 
-  ActivityIndicator, 
-  FlatList, 
-  Alert, 
-  TextInput, 
-  KeyboardAvoidingView, 
-  Modal, 
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  FlatList,
+  Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
-  SafeAreaView 
+  SafeAreaView
 } from "react-native";
 import { CustomText } from "../../components/CustomText";
 import GradientBackground from "../../components/GradientBackground";
@@ -81,11 +81,28 @@ const Community: React.FC<Props> = ({ navigation }) => {
   const [selectedPostComments, setSelectedPostComments] = useState<Comment[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ id: number; username: string } | null>(null);
+  const [activeTab, setActiveTab] = useState<"Others" | "My Posts">("Others");
   const { t } = useTranslation();
 
+  const fetchPostsBasedOnTab = useCallback(async () => {
+    if (activeTab === "My Posts") {
+      console.log('Api call fetch My post')
+      setPosts([]);
+      await fetchMyPosts();
+    } else {
+      setPosts([]);
+      console.log('Api call fetch post')
+      await fetchPosts();
+    }
+  }, [activeTab]);
+
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPostsBasedOnTab();
+  }, [activeTab]);
+
+  const handleTabChange = (tab: "Others" | "My Posts") => {
+    setActiveTab(tab);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -107,6 +124,7 @@ const Community: React.FC<Props> = ({ navigation }) => {
   const fetchPosts = async () => {
     try {
       const token = await AsyncStorage.getItem('Usertoken');
+
       if (!token) {
         Toast.show({
           type: 'error',
@@ -115,16 +133,18 @@ const Community: React.FC<Props> = ({ navigation }) => {
         });
         return;
       }
-
+      console.log(token)
       setLoading(true);
       const response = await axios.get(
         `${API_URL}${ENDPOINTS.community}`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           }
         }
       );
+      console.log(response)
       if (response?.data?.success) {
         setPosts(response.data.data);
         console.log("Posts loaded:", response?.data?.data);
@@ -147,6 +167,54 @@ const Community: React.FC<Props> = ({ navigation }) => {
       setLoading(false);
     }
   };
+  const fetchMyPosts = async () => {
+    try {
+      const token = await AsyncStorage.getItem('Usertoken');
+
+      if (!token) {
+        Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: t("userTokenMissing"),
+        });
+        return;
+      }
+      console.log(token)
+      setLoading(true);
+      const response = await axios.get(
+        `${API_URL}${ENDPOINTS.communitymypost}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+      console.log(response)
+      if (response?.data?.success) {
+        setPosts(response.data.data);
+        console.log("My Posts loaded:", response?.data?.data);
+      } else {
+        console.log("Failed to load posts");
+        Toast.show({
+          type: 'error',
+          text1: t("errorTitle"),
+          text2: "Failed to load posts"
+        });
+      }
+    } catch (err: any) {
+      console.log("Fetch posts error:", err);
+      Toast.show({
+        type: 'error',
+        text1: t("errorTitle"),
+        text2: err.message || "Network error"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   const openCommentModal = (postId: string, post: Post) => {
     setSelectedPostId(postId);
@@ -160,7 +228,7 @@ const Community: React.FC<Props> = ({ navigation }) => {
     if (!commentText.trim() || !selectedPostId) {
       Toast.show({
         type: 'error',
-        text1:t("errorTitle"),
+        text1: t("errorTitle"),
         text2: t("writeComment")
       });
       return;
@@ -193,12 +261,12 @@ const Community: React.FC<Props> = ({ navigation }) => {
       if (response.data.success || response.data.status_code === 200) {
         Toast.show({
           type: 'success',
-          text1:t("successTitle"),
-          text2: replyingTo ? t("replyposted!") :t("commentSuccess ")
+          text1: t("successTitle"),
+          text2: replyingTo ? t("replyposted!") : t("commentSuccess ")
         });
         setCommentText("");
         setReplyingTo(null);
-        
+
         fetchPosts();
         if (selectedPost) {
           const updatedPost = await fetchPostDetails(selectedPost.id.toString());
@@ -211,8 +279,8 @@ const Community: React.FC<Props> = ({ navigation }) => {
       console.log("Comment error:", error);
       Toast.show({
         type: 'error',
-        text1:t("errorTitle"),
-        text2:t("faildpost")
+        text1: t("errorTitle"),
+        text2: t("faildpost")
       });
     } finally {
       setCommentLoading(false);
@@ -246,8 +314,8 @@ const Community: React.FC<Props> = ({ navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1:t("errorTitle"),
-          text2:t("userTokenMissing")
+          text1: t("errorTitle"),
+          text2: t("userTokenMissing")
         });
         return;
       }
@@ -262,9 +330,10 @@ const Community: React.FC<Props> = ({ navigation }) => {
           },
         }
       );
-      
+
       if (response?.data.status_code === 200) {
         fetchPosts();
+
         if (selectedPost && selectedPost.id === postId) {
           const updatedPost = await fetchPostDetails(postId.toString());
           if (updatedPost) {
@@ -276,24 +345,24 @@ const Community: React.FC<Props> = ({ navigation }) => {
       console.log("Like error:", error);
       Toast.show({
         type: 'error',
-        text1:t("errorTitle"),
-        text2:t("faildlike") 
+        text1: t("errorTitle"),
+        text2: t("faildlike")
       });
-    } finally { 
+    } finally {
       setLoading(false);
     }
   };
 
   const renderCommentItem = ({ item, level = 0 }: { item: Comment; level?: number }) => {
     const marginLeft = level * 20;
-    
+
     return (
       <View style={[styles.commentItem, { marginLeft }]}>
         <View style={styles.commentHeader}>
           <View style={styles.commentUserImage}>
             <Image
               source={
-                item.sender.profile_image 
+                item.sender.profile_image
                   ? { uri: `${IMAGE_URL}${item.sender.profile_image}` }
                   : IMAGES.dummyuser
               }
@@ -319,14 +388,14 @@ const Community: React.FC<Props> = ({ navigation }) => {
             onPress={() => setReplyingTo({ id: item.id, username: item.sender.username })}
             style={styles.replyButton}
           >
-            <VectorIcon 
-              name="reply" 
-              size={14} 
-              color={COLORS.blue} 
-              type="MaterialIcons" 
+            <VectorIcon
+              name="reply"
+              size={14}
+              color={COLORS.blue}
+              type="MaterialIcons"
             />
             <CustomText type="extraSmall" style={{ color: COLORS.blue, marginLeft: 5 }}>
-             {t("reply")}
+              {t("reply")}
             </CustomText>
           </TouchableOpacity>
         </View>
@@ -437,7 +506,9 @@ const Community: React.FC<Props> = ({ navigation }) => {
       <GradientBackground>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.blue} />
-          <CustomText style={styles.loadingText}>{t("loading")}...</CustomText>
+          <CustomText style={styles.loadingText}>
+            {activeTab === 'My Posts' ? "Loading my posts..." : "Loading community posts..."}
+          </CustomText>
         </View>
       </GradientBackground>
     );
@@ -466,13 +537,66 @@ const Community: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <Spacer size={15} />
+        <View style={styles.selectcat}>
+          <TouchableOpacity onPress={() => handleTabChange("Others")}>
+            <CustomText
+              type="subHeading"
+              style={[
+                styles.phovid,
+                activeTab === "Others" ? styles.activeTab : styles.inactiveTab,
+              ]}
+            >
+              {t("Others")}
+            </CustomText>
+          </TouchableOpacity>
 
-        <FlatList
-          data={posts}
-          keyExtractor={item => item.id.toString()}
-          renderItem={renderPost}
-          showsVerticalScrollIndicator={false}
-        />
+          <CustomText style={styles.phovid} type="heading">|</CustomText>
+
+          <TouchableOpacity onPress={() => handleTabChange("My Posts")}>
+            <CustomText
+              type="subHeading"
+              style={[
+                styles.phovid,
+                activeTab === "My Posts" ? styles.activeTab : styles.inactiveTab,
+              ]}
+            >
+              {t("My Posts")}
+            </CustomText>
+          </TouchableOpacity>
+        </View>
+
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.blue} />
+            <CustomText style={styles.loadingText}>
+              {activeTab === "My Posts" ? "Loading my posts..." : "Loading community posts..."}
+            </CustomText>
+          </View>
+        ) : (
+          <FlatList
+            data={posts}
+            keyExtractor={item => item.id.toString()}
+            renderItem={renderPost}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View >
+                <VectorIcon
+                  name={activeTab === "My Posts" ? "post-outline" : "earth"}
+                  type="MaterialCommunityIcons"
+                  size={60}
+                  color={COLORS.lightGrey}
+                />
+                <CustomText type="small" style={{ color: COLORS.darkgrey, marginTop: 10, textAlign: 'center' }}>
+                  {activeTab === "My Posts"
+                    ? "You haven't created any posts yet."
+                    : "No community posts available."}
+                </CustomText>
+              </View>
+            }
+            refreshing={loading}
+            onRefresh={fetchPostsBasedOnTab}
+          />
+        )}
       </View>
 
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('ViewAllPost')}>
@@ -504,7 +628,7 @@ const Community: React.FC<Props> = ({ navigation }) => {
               backgroundColor: COLORS.White,
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
-              height: '70%', 
+              height: '70%',
               maxHeight: '70%',
             }}>
               <View style={styles.modalHeader}>
@@ -535,11 +659,11 @@ const Community: React.FC<Props> = ({ navigation }) => {
                 />
               ) : (
                 <View style={styles.noCommentsContainer}>
-                  <VectorIcon 
-                    name="comment-outline" 
-                    type="MaterialCommunityIcons" 
-                    size={60} 
-                    color={COLORS.lightGrey} 
+                  <VectorIcon
+                    name="comment-outline"
+                    type="MaterialCommunityIcons"
+                    size={60}
+                    color={COLORS.lightGrey}
                   />
                   <CustomText type="small" style={{ color: COLORS.darkgrey, marginTop: 10 }}>
                     {t("noComment")}
@@ -583,11 +707,11 @@ const Community: React.FC<Props> = ({ navigation }) => {
                     {commentLoading ? (
                       <ActivityIndicator size="small" color={COLORS.White} />
                     ) : (
-                      <VectorIcon 
-                        name="send" 
-                        size={20} 
-                        color={COLORS.White} 
-                        type="MaterialIcons" 
+                      <VectorIcon
+                        name="send"
+                        size={20}
+                        color={COLORS.White}
+                        type="MaterialIcons"
                       />
                     )}
                   </TouchableOpacity>
