@@ -40,6 +40,8 @@ interface Comment {
   parent_id: number | null;
   created_at: string;
   updated_at: string;
+  comment_text:string
+
 }
 
 interface ApiResponse {
@@ -149,7 +151,7 @@ const fetchComments = async (topicId: number) => {
         }
       }
     );
-
+console.log("responese of get comment :",response)
     if (response.data.status || response.data.success) {
       setComments(response.data.comments || []);
     }
@@ -336,7 +338,7 @@ const fetchReplies = async (topicId: number, commentId: number) => {
           </View>
         </View>
         <CustomText type="small" style={styles.commentText}>
-          {item.message || "No message"}
+          {item.comment_text || "No message"}
         </CustomText>
         
         <TouchableOpacity 
