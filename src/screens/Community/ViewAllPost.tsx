@@ -16,6 +16,7 @@ import Toast from "react-native-toast-message";
 import axios from "axios";
 import ENDPOINTS, { API_URL, IMAGE_URL } from "../../APIService/endPoints";
 import { useFocusEffect } from "@react-navigation/native";
+import Photoviewer from "../../components/Photoviewer";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ViewAllPost">;
 
@@ -119,7 +120,10 @@ const ViewAllPost: React.FC<Props> = ({ navigation }) => {
         return (
             <TouchableOpacity style={styles.vcard}>
                 {imageUrl ? (
-                    <Image source={{ uri: imageUrl }} style={styles.vcardIcon} />
+                    
+                            <Image source={{ uri: imageUrl }} style={styles.vcardIcon} />
+                   
+                    
                 ) : (
                     <View style={[styles.vcardIcon, { backgroundColor: COLORS.grey, justifyContent: 'center', alignItems: 'center' }]}>
                          <VectorIcon type="MaterialIcons" name="play-circle-outline" size={25} color={COLORS.White} />
