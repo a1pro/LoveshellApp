@@ -144,7 +144,7 @@ const MyTopic: React.FC<Props> = ({ navigation }) => {
           }
         }
       );
-
+console.log(response)
       if (response.data.status || response.data.success) {
         setComments(response.data.comments || []);
       }
